@@ -15,6 +15,7 @@ import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.OAuth2.User.OAuth2UserInfo;
 import ppztw.AdvertBoard.Security.OAuth2.User.OAuth2UserInfoFactory;
+import ppztw.AdvertBoard.Security.UserPrincipal;
 
 import java.util.Optional;
 
