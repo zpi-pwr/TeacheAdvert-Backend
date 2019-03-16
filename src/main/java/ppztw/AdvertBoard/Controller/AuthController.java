@@ -64,6 +64,10 @@ public class AuthController {
             throw new BadRequestException("Email address already in use.");
         }
 
+        if(userRepository.existsByEmail(signUpRequest.getName())) {
+            throw new BadRequestException("Username already in use.");
+        }
+
         // Creating user's account
         User user = new User();
         user.setName(signUpRequest.getName());
