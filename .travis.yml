@@ -9,3 +9,5 @@ deploy:
   provider: heroku
   app: pwr-advert-board-backend
   api_key: "8e1c45af-bde1-4afd-b555-3e1674ef422a"
+  on:
+    branch: master
