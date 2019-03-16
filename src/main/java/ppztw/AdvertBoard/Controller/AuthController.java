@@ -27,7 +27,7 @@ import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
@@ -62,6 +62,10 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if(userRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new BadRequestException("Email address already in use.");
+        }
+
+        if(userRepository.existsByEmail(signUpRequest.getName())) {
+            throw new BadRequestException("Username already in use.");
         }
 
         // Creating user's account
