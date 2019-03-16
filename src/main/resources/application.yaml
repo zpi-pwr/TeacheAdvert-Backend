@@ -1,7 +1,7 @@
 spring:
   datasource:
-    url: jdbc:postgresql://ec2-54-247-70-127.eu-west-1.compute.amazonaws.com:5432
-    username: aca54a4d70264e26a2bbf2f0791381a78948583d5519505df14315a16b879868
+    url: jdbc:postgresql://packy.db.elephantsql.com:5432/rmyrrehv?useSSL=false
+    username: rmyrrehv
     password: llB9Mb1O0ykpgk39CFMaVbEQMGBrtEAd
 
   jpa:
