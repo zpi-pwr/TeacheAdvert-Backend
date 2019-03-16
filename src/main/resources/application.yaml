@@ -20,8 +20,10 @@ spring:
       client:
         registration:
           google:
-            clientId: 790119077677-0tg65et9si754tg66bea5hh8nknhu1ag.apps.googleusercontent.com
-            clientSecret: EsRKGr6qm0LNrtMyz8yoTFKW
+            # clientId: 790119077677-0tg65et9si754tg66bea5hh8nknhu1ag.apps.googleusercontent.com
+            # clientSecret: EsRKGr6qm0LNrtMyz8yoTFKW
+            clientId: 5014057553-8gm9um6vnli3cle5rgigcdjpdrid14m9.apps.googleusercontent.com
+            clientSecret: tWZKVLxaD_ARWsriiiUFYoIk
             redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - email
@@ -45,7 +47,7 @@ app:
   oauth2:
     authorizedRedirectUris:
       - http://localhost:3000/oauth2/redirect
-      - http://pwr-advert-board-backend.herokuapp.com/oauth2/redirect
+      - http://advertboard.pl:3000/oauth2/redirect
       - myandroidapp://oauth2/redirect
       - myiosapp://oauth2/redirect
 
