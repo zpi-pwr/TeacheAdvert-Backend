@@ -2,9 +2,9 @@
 
 Backend of the application
 
-#Methods
+# Methods
 
-###Sign Up
+### Sign Up
 
 ```
 /auth/signup
@@ -28,7 +28,7 @@ data
 {"name":<USERNAME>, "email":<EMAIL>,"password":<PASSWORD>}
 ```
 
-###Log in
+### Log in
 
 ```
 /auth/login
@@ -52,7 +52,7 @@ data
 {"email":<EMAIL>,"password":<PASSWORD>}
 ```
 
-###Current user
+### Current user
 
 ```
 /user/me
