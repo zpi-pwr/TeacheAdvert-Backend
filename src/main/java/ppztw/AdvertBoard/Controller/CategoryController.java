@@ -19,7 +19,9 @@ import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/category")
@@ -77,13 +79,19 @@ public class CategoryController {
 
     @GetMapping("/get/all")
     @PreAuthorize("permitAll()")
-    public List<Category> getCategory() {
-        return categoryRepository.findAll();
+    public Map<String, List<Category>> getCategory() {
+        List<Category> categories = categoryRepository.findAll();
+        Map<String, List<Category>> categoryMap = new HashMap<>();
+        categoryMap.put("categories", categories);
+        return categoryMap;
     }
 
     @GetMapping("/get_subcategory/all")
     @PreAuthorize("permitAll()")
-    public List<Subcategory> getSubcategory() {
-        return subCategoryRepository.findAll();
+    public Map<String, List<Subcategory>> getSubcategory() {
+        List<Subcategory> subcategories = subCategoryRepository.findAll();
+        Map<String, List<Subcategory>> categoryMap = new HashMap<>();
+        categoryMap.put("subcategories", subcategories);
+        return categoryMap;
     }
 }

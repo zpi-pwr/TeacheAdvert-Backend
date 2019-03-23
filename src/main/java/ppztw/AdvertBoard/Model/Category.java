@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import lombok.Setter;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "category_id")
     private Long id;
 
     @Getter(value = AccessLevel.PUBLIC)
@@ -29,6 +31,7 @@ public class Category {
     @Getter(value = AccessLevel.PUBLIC)
     @Setter(value = AccessLevel.PUBLIC)
     @OneToMany(mappedBy="parentCategory")
+    @JsonManagedReference
     private List<Subcategory> subCategories;
 
     public void addSubcategory(Subcategory subCategory) {
