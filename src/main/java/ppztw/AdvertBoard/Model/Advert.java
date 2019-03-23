@@ -30,7 +30,11 @@ public class Advert {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ImgUrl> imgUrls;
 
-    public Advert(String title, List<String> tags, String description, List<String> imgUrls) {
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Subcategory subcategory;
+
+    public Advert(String title, List<String> tags, String description, List<String> imgUrls,
+                  Subcategory subcategory) {
         this.title = title;
         this.tags = new ArrayList<>();
         this.imgUrls = new ArrayList<>();
@@ -41,5 +45,7 @@ public class Advert {
 
         for (String imgUrl : imgUrls)
             this.imgUrls.add(new ImgUrl(imgUrl));
+
+        this.subcategory = subcategory;
     }
 }
