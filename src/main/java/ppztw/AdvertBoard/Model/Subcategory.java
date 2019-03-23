@@ -17,8 +17,8 @@ public class Subcategory {
 
     @Getter(value = AccessLevel.PUBLIC)
     @Setter(value = AccessLevel.PUBLIC)
-    @Column(nullable = false)
-    private String subcategory_name;
+    @Column(name = "subcategory_name", nullable = false)
+    private String subcategoryName;
 
     @Getter(value = AccessLevel.PUBLIC)
     @Setter(value = AccessLevel.PUBLIC)
@@ -29,12 +29,4 @@ public class Subcategory {
     @ManyToOne
     @JoinColumn(name = "category_name")
     private Category parentCategory;
-
-    public void setCategory(Category category) {
-        this.parentCategory = category;
-    }
-
-    public Category getCategory() {
-        return this.parentCategory;
-    }
 }

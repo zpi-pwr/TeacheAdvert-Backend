@@ -19,8 +19,8 @@ public class Category {
 
     @Getter(value = AccessLevel.PUBLIC)
     @Setter(value = AccessLevel.PUBLIC)
-    @Column(nullable = false)
-    private String category_name;
+    @Column(name = "category_name", nullable = false)
+    private String categoryName;
 
     @Getter(value = AccessLevel.PUBLIC)
     @Setter(value = AccessLevel.PUBLIC)
