@@ -1,15 +1,18 @@
 package ppztw.AdvertBoard.Model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "adverts")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Advert {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,21 +21,29 @@ public class Advert {
     @Column(nullable = false)
     private String title;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
     @Column
-    private List<String> tags;
+    private List<Tag> tags;
 
     @Column(nullable = false)
     private String description;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
     @Column
-    private List<String> imgUrls;
+    private List<ImgUrl> imgUrls;
 
     public Advert(String title, List<String> tags, String description, List<String> imgUrls) {
         this.title = title;
-        this.tags = tags;
+        this.tags = new ArrayList<>();
+        this.imgUrls = new ArrayList<>();
         this.description = description;
-        this.imgUrls = imgUrls;
+
+        for (String tag : tags)
+            this.tags.add(new Tag(tag));
+
+        for (String imgUrl : imgUrls)
+            this.imgUrls.add(new ImgUrl(imgUrl));
     }
 }
