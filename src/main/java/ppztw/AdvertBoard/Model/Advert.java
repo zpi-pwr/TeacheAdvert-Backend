@@ -21,17 +21,13 @@ public class Advert {
     @Column(nullable = false)
     private String title;
 
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    @Column
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Tag> tags;
 
     @Column(nullable = false)
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    @Column
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ImgUrl> imgUrls;
 
     public Advert(String title, List<String> tags, String description, List<String> imgUrls) {
