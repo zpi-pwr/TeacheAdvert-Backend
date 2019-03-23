@@ -26,7 +26,4 @@ public class EditAdvertRequest {
     @Nullable
     private List<String> imgUrls;
 
-    @Nullable
-    private String subcategory;
-
 }

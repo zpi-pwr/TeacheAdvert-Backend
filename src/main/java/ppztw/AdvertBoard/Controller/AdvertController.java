@@ -98,15 +98,6 @@ public class AdvertController {
         if (editAdvertRequest.getDescription() != null)
             advert.setDescription(editAdvertRequest.getDescription());
 
-        if (editAdvertRequest.getSubcategory() != null) {
-            Subcategory subcategory = subcategoryRepository.findBySubcategoryName(
-                    editAdvertRequest.getSubcategory()).orElseThrow(() ->
-                    new ResourceNotFoundException(
-                            "Subcategory", "name", editAdvertRequest.getSubcategory()));
-
-            advert.setSubcategory(subcategory);
-        }
-
         userRepository.save(user);
         return ResponseEntity.ok(new ApiResponse(true, "Advert edited successfully"));
     }
