@@ -80,7 +80,7 @@ public class SubcategoryController {
         return ResponseEntity.ok(new ApiResponse(true, "Category removed successfully!"));
     }
 
-    @GetMapping("/get_subcategory/all")
+    @GetMapping("/all")
     @PreAuthorize("permitAll()")
     public Map<String, List<Subcategory>> getSubcategory() {
         List<Subcategory> subcategories = subCategoryRepository.findAll();
