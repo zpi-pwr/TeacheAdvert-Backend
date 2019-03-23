@@ -1,4 +1,4 @@
-package ppztw.AdvertBoard.Payload;
+package ppztw.AdvertBoard.Payload.Advert;
 
 
 import lombok.Getter;
