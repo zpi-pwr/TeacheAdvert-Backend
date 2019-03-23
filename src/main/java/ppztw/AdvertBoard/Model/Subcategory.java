@@ -32,4 +32,13 @@ public class Subcategory {
     @JoinColumn(name = "category_name")
     @JsonBackReference
     private Category parentCategory;
+
+    public void changeCategory(Category newCategory) {
+        if(this.parentCategory != null) {
+            this.parentCategory.getSubCategories().remove(this);
+        }
+
+        newCategory.getSubCategories().add(this);
+        this.parentCategory = newCategory;
+    }
 }

@@ -47,7 +47,7 @@ public class CategoryController {
         category.setCategoryName(createCategoryRequest.getCategoryName());
         category.setDescription(createCategoryRequest.getDescription());
 
-        logger.info(String.format("Admin %s has created category with the name %s", userPrincipal.getName(), createCategoryRequest.getCategoryName()));
+        logger.info(String.format("Admin %s has created category with name %s", userPrincipal.getName(), createCategoryRequest.getCategoryName()));
 
         categoryRepository.save(category);
 
@@ -70,18 +70,15 @@ public class CategoryController {
 
         categoryRepository.delete(category);
 
-        logger.info(String.format("Admin %s has removed category with the name %s"
+        logger.info(String.format("Admin %s has removed category with name %s"
                 , userPrincipal.getName(), categoryName));
 
         return ResponseEntity.ok(new ApiResponse(true, "Category removed successfully!"));
     }
 
-    @GetMapping("/get/all")
+    @GetMapping("/all")
     @PreAuthorize("permitAll()")
-    public Map<String, List<Category>> getCategory() {
-        List<Category> categories = categoryRepository.findAll();
-        Map<String, List<Category>> categoryMap = new HashMap<>();
-        categoryMap.put("categories", categories);
-        return categoryMap;
+    public List<Category> getCategory() {
+        return categoryRepository.findAll();
     }
 }
