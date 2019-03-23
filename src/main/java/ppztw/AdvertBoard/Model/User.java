@@ -1,9 +1,10 @@
 package ppztw.AdvertBoard.Model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
-import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -40,9 +41,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;
 
-
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Advert> adverts;
 
     private String providerId;
