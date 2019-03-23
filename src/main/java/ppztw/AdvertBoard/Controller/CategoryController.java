@@ -54,27 +54,26 @@ public class CategoryController {
         return ResponseEntity.ok(new ApiResponse(true, "Category created successfully!"));
     }
 
-    @PostMapping("/add_subcategory")
+    @PostMapping("/remove")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> addSubcategory(@CurrentUser UserPrincipal userPrincipal, @Valid @RequestBody CreateSubcategoryRequest createSubcategoryRequest) {
-        if(subCategoryRepository.existsBySubcategoryName(createSubcategoryRequest.getSubcategoryName())) {
-            throw new BadRequestException("Subcategory with this name already exists!");
+    public ResponseEntity<?> removeCategory(@CurrentUser UserPrincipal userPrincipal, String categoryName) {
+        Category category = categoryRepository.findByCategoryName(categoryName)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "name", categoryName));
+
+        List<Subcategory> subcategories = category.getSubCategories();
+
+        for(int i = 0; i < subcategories.size(); i++) {
+            Subcategory subcategory = subcategories.get(i);
+            subcategory.setParentCategory(null);
+            subCategoryRepository.save(subcategory);
         }
 
-        Category category = categoryRepository.findByCategoryName(createSubcategoryRequest.getCategory())
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "name", createSubcategoryRequest.getCategory()));
+        categoryRepository.delete(category);
 
-        Subcategory subcategory = new Subcategory();
-        subcategory.setSubcategoryName(createSubcategoryRequest.getSubcategoryName());
-        subcategory.setDescription(createSubcategoryRequest.getDescription());
-        subcategory.setParentCategory(category);
+        logger.info(String.format("Admin %s has removed category with the name %s"
+                , userPrincipal.getName(), categoryName));
 
-        logger.info(String.format("Admin %s has created subcategory with the name %s and parent category %s"
-                , userPrincipal.getName(), createSubcategoryRequest.getSubcategoryName(), createSubcategoryRequest.getCategory()));
-
-        subCategoryRepository.save(subcategory);
-
-        return ResponseEntity.ok(new ApiResponse(true, "Subcategory created successfully!"));
+        return ResponseEntity.ok(new ApiResponse(true, "Category removed successfully!"));
     }
 
     @GetMapping("/get/all")
@@ -83,15 +82,6 @@ public class CategoryController {
         List<Category> categories = categoryRepository.findAll();
         Map<String, List<Category>> categoryMap = new HashMap<>();
         categoryMap.put("categories", categories);
-        return categoryMap;
-    }
-
-    @GetMapping("/get_subcategory/all")
-    @PreAuthorize("permitAll()")
-    public Map<String, List<Subcategory>> getSubcategory() {
-        List<Subcategory> subcategories = subCategoryRepository.findAll();
-        Map<String, List<Subcategory>> categoryMap = new HashMap<>();
-        categoryMap.put("subcategories", subcategories);
         return categoryMap;
     }
 }
