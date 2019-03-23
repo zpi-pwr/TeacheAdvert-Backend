@@ -10,6 +10,7 @@ import ppztw.AdvertBoard.Model.*;
 import ppztw.AdvertBoard.Payload.Advert.CreateAdvertRequest;
 import ppztw.AdvertBoard.Payload.Advert.EditAdvertRequest;
 import ppztw.AdvertBoard.Payload.ApiResponse;
+import ppztw.AdvertBoard.Repository.AdvertRepository;
 import ppztw.AdvertBoard.Repository.SubcategoryRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
@@ -31,6 +32,9 @@ public class AdvertController {
 
     @Autowired
     private AdvertUserService advertUserService;
+
+    @Autowired
+    private AdvertRepository advertRepository;
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('USER')")
@@ -121,4 +125,16 @@ public class AdvertController {
         return ResponseEntity.ok(new ApiResponse(true, "Advert removed."));
     }
 
+    @GetMapping("all")
+    @PreAuthorize("permitAll()")
+    public List<Advert> getAllAdverts() {
+        return advertRepository.findAll();
+    }
+
+    @GetMapping("get")
+    @PreAuthorize("permitAll()")
+    public Advert getAdvert(@RequestParam Long id) {
+        return advertRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Advert", "id", id));
+    }
 }
