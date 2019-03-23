@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,13 @@ public class Advert {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Subcategory subcategory;
 
+    @Column(nullable = false)
+    private LocalDate date;
+
+    @Column
+    private Status status;
+
+
     public Advert(String title, List<String> tags, String description, List<String> imgUrls,
                   Subcategory subcategory) {
         this.title = title;
@@ -47,5 +55,11 @@ public class Advert {
             this.imgUrls.add(new ImgUrl(imgUrl));
 
         this.subcategory = subcategory;
+
+        this.date = LocalDate.now();
+
+        status = Status.OK;
     }
+
+    private enum Status {OK, EDITED, ARCHIVED, BANNED}
 }
