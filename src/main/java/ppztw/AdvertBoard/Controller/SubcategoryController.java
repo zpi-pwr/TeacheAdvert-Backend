@@ -51,7 +51,7 @@ public class SubcategoryController {
         subcategory.setDescription(createSubcategoryRequest.getDescription());
         subcategory.setParentCategory(category);
 
-        logger.info(String.format("Admin %s has created subcategory with the name %s and parent category %s"
+        logger.info(String.format("Admin %s has created subcategory with name %s and parent category %s"
                 , userPrincipal.getName(), createSubcategoryRequest.getSubcategoryName(), createSubcategoryRequest.getCategory()));
 
         subCategoryRepository.save(subcategory);
@@ -74,18 +74,35 @@ public class SubcategoryController {
 
         subCategoryRepository.delete(subcategory);
 
-        logger.info(String.format("Admin %s has removed subcategory with the name %s and parent category: %s"
+        logger.info(String.format("Admin %s has removed subcategory with name %s and parent category: %s"
                 , userPrincipal.getName(), subcategoryName, parentCategory.getCategoryName()));
 
         return ResponseEntity.ok(new ApiResponse(true, "Category removed successfully!"));
     }
 
+    @PostMapping("/edit")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> changeCategory(@CurrentUser UserPrincipal userPrincipal, String subcategoryName, String newCategoryName) {
+        Subcategory subcategory = subCategoryRepository.findBySubcategoryName(subcategoryName)
+                .orElseThrow(() -> new ResourceNotFoundException("Subcategory", "name", subcategoryName));
+
+        Category category = categoryRepository.findByCategoryName(newCategoryName)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "name", subcategoryName));
+
+        subcategory.changeCategory(category);
+
+        subCategoryRepository.save(subcategory);
+        categoryRepository.save(category);
+
+        logger.info(String.format("Admin %s has changed subcategory with name %s. New parent: %s"
+                , userPrincipal.getName(), subcategoryName, newCategoryName));
+
+        return ResponseEntity.ok(new ApiResponse(true, "Subcategory edited successfully!"));
+    }
+
     @GetMapping("/all")
     @PreAuthorize("permitAll()")
-    public Map<String, List<Subcategory>> getSubcategory() {
-        List<Subcategory> subcategories = subCategoryRepository.findAll();
-        Map<String, List<Subcategory>> categoryMap = new HashMap<>();
-        categoryMap.put("subcategories", subcategories);
-        return categoryMap;
+    public List<Subcategory> getSubcategory() {
+        return subCategoryRepository.findAll();
     }
 }
