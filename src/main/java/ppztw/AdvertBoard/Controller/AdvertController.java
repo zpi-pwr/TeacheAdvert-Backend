@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import ppztw.AdvertBoard.Advert.AdvertUserService;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.*;
@@ -22,6 +23,7 @@ import ppztw.AdvertBoard.Security.UserPrincipal;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/advert")
@@ -68,12 +70,21 @@ public class AdvertController {
                 tags.add(tempTag);
             }
 
+        Image img = null;
+        if (createAdvertRequest.getImage() != null) {
+            CommonsMultipartFile imageFile = createAdvertRequest.getImage();
+            System.out.println(imageFile.getContentType());
+            if (Objects.equals(imageFile.getContentType(), "image/png")) {
+                img = new Image(imageFile.getName(), imageFile.getBytes());
+            }
+        }
+
 
         Advert advert = new Advert(
                 createAdvertRequest.getTitle(),
                 tags,
                 createAdvertRequest.getDescription(),
-                createAdvertRequest.getImgUrls(), subcategory,
+                img, subcategory,
                 user);
         advertList.add(advert);
         user.setAdverts(advertList);
@@ -96,11 +107,13 @@ public class AdvertController {
                 new ResourceNotFoundException("Advert", "id", editAdvertRequest.getId()));
 
 
-        if (editAdvertRequest.getImgUrls() != null) {
-            List<ImgUrl> imgUrls = new ArrayList<>();
-            for (String imgUrl : editAdvertRequest.getImgUrls())
-                imgUrls.add(new ImgUrl(imgUrl));
-            advert.setImgUrls(imgUrls);
+        if (editAdvertRequest.getImage() != null) {
+            CommonsMultipartFile imageFile = editAdvertRequest.getImage();
+            System.out.println(imageFile.getContentType());
+            if (Objects.equals(imageFile.getContentType(), "image/png")) {
+                Image img = new Image(imageFile.getName(), imageFile.getBytes());
+                advert.setImage(img);
+            }
         }
 
         if (editAdvertRequest.getTags() != null) {

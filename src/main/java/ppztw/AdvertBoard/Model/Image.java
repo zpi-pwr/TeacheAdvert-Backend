@@ -1,10 +1,13 @@
 package ppztw.AdvertBoard.Model;
 
 
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "images")
+@NoArgsConstructor
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,4 +18,8 @@ public class Image {
     @Lob
     private byte[] pic;
 
+    public Image(String filename, byte[] pic) {
+        this.filename = filename;
+        this.pic = pic;
+    }
 }
