@@ -9,8 +9,8 @@ public class RepositoryRestConfig implements RepositoryRestConfigurer {
 
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
-        config.setPageParamName("p")
-                .setLimitParamName("l")
-                .setSortParamName("q");
+        config.setPageParamName("page")
+                .setLimitParamName("limit")
+                .setSortParamName("sort");
     }
 }
