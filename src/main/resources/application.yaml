@@ -8,7 +8,7 @@ spring:
     password: aca54a4d70264e26a2bbf2f0791381a78948583d5519505df14315a16b879868
 
   jpa:
-    show-sql: true
+    dialect: org.hibernate.dialect.PostgreSQL9Dialect
     hibernate:
       ddl-auto: update
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
@@ -16,8 +16,8 @@ spring:
       hibernate:
         jdbc:
           lob:
-            non_contextual_creation=true:
-        dialect: org.hibernate.dialect.PostgreSQL82Dialect
+            non_contextual_creation: true
+
   security:
     oauth2:
       client:
