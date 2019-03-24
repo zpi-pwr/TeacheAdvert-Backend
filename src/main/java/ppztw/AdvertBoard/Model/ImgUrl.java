@@ -15,7 +15,7 @@ public class ImgUrl {
     @Id
     private String name;
 
-    ImgUrl(String name) {
+    public ImgUrl(String name) {
         this.name = name;
     }
 

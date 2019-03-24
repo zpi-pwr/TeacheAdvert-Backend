@@ -15,7 +15,7 @@ public class Tag {
     @Id
     private String name;
 
-    Tag(String name) {
+    public Tag(String name) {
         this.name = name;
     }
 }

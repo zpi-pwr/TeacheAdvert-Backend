@@ -1,11 +1,12 @@
 package ppztw.AdvertBoard.Model;
 
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,6 +30,10 @@ public class Subcategory {
     @JsonBackReference
     private Category parentCategory;
 
+    @OneToMany
+    @JsonBackReference
+    private List<Advert> adverts;
+
     public void changeCategory(Category newCategory) {
         if(this.parentCategory != null) {
             this.parentCategory.getSubCategories().remove(this);
@@ -37,4 +42,11 @@ public class Subcategory {
         newCategory.getSubCategories().add(this);
         this.parentCategory = newCategory;
     }
+
+    public void addAdvert(Advert advert) {
+        if (adverts == null)
+            adverts = new ArrayList<>();
+        adverts.add(advert);
+    }
+
 }

@@ -1,4 +1,4 @@
-package ppztw.AdvertBoard.Payload;
+package ppztw.AdvertBoard.Payload.Advert;
 
 
 import lombok.Getter;
@@ -23,4 +23,7 @@ public class CreateAdvertRequest {
 
     @Nullable
     private List<String> imgUrls;
+
+    @NotBlank
+    private String subcategory;
 }
