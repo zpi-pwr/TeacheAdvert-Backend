@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ppztw.AdvertBoard.Exception.BadRequestException;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
+import ppztw.AdvertBoard.Model.Advert;
 import ppztw.AdvertBoard.Model.Category;
 import ppztw.AdvertBoard.Model.Subcategory;
 import ppztw.AdvertBoard.Payload.ApiResponse;
@@ -103,4 +104,11 @@ public class SubcategoryController {
         return subCategoryRepository.findAll();
     }
 
+    @GetMapping("/get")
+    @PreAuthorize("permitAll()")
+    public List<Advert> getSubcategoryAdverts(@RequestParam String subcategoryName) {
+        Subcategory subcategory = subCategoryRepository.findBySubcategoryName(subcategoryName)
+                .orElseThrow(() -> new ResourceNotFoundException("Subcategory", "name", subcategoryName));
+        return subcategory.getAdverts();
+    }
 }
