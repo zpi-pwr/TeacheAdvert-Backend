@@ -9,6 +9,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "categories", uniqueConstraints = {
         @UniqueConstraint(columnNames = "category_name")
@@ -19,17 +21,11 @@ public class Category {
     @Column(name = "category_id")
     private Long id;
 
-    @Getter(value = AccessLevel.PUBLIC)
-    @Setter(value = AccessLevel.PUBLIC)
     @Column(name = "category_name", nullable = false)
     private String categoryName;
 
-    @Getter(value = AccessLevel.PUBLIC)
-    @Setter(value = AccessLevel.PUBLIC)
     private String description;
 
-    @Getter(value = AccessLevel.PUBLIC)
-    @Setter(value = AccessLevel.PUBLIC)
     @OneToMany(mappedBy="parentCategory")
     @JsonManagedReference
     private List<Subcategory> subCategories;
