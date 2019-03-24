@@ -1,6 +1,7 @@
 package ppztw.AdvertBoard.Model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,7 +32,7 @@ public class Subcategory {
     private Category parentCategory;
 
     @OneToMany
-    @JsonBackReference
+    @JsonIgnore
     private List<Advert> adverts;
 
     public void changeCategory(Category newCategory) {

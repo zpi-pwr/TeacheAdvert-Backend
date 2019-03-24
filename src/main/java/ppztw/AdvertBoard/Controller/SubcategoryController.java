@@ -3,6 +3,10 @@ package ppztw.AdvertBoard.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +26,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/subcategory")
+@RequestMapping("/subcategory")
 public class SubcategoryController {
 
     private static final Logger logger = LoggerFactory.getLogger(SubcategoryController.class);
@@ -106,9 +110,16 @@ public class SubcategoryController {
 
     @GetMapping("/get")
     @PreAuthorize("permitAll()")
-    public List<Advert> getSubcategoryAdverts(@RequestParam String subcategoryName) {
+    public Page<Advert> getSubcategoryAdverts(@RequestParam("subcategoryName") String subcategoryName,
+                                              Pageable pageable) {
         Subcategory subcategory = subCategoryRepository.findBySubcategoryName(subcategoryName)
                 .orElseThrow(() -> new ResourceNotFoundException("Subcategory", "name", subcategoryName));
-        return subcategory.getAdverts();
+        List<Advert> adverts = subcategory.getAdverts();
+        PagedListHolder<Advert> pagedListHolder = new PagedListHolder<Advert>(adverts);
+        pagedListHolder.setPageSize(pageable.getPageSize());
+        pagedListHolder.setPage(pageable.getPageNumber());
+
+        PageImpl<Advert> page = new PageImpl<>(pagedListHolder.getPageList(), pageable, adverts.size());
+        return page;
     }
 }
