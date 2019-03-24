@@ -3,11 +3,14 @@ package ppztw.AdvertBoard.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ppztw.AdvertBoard.Exception.BadRequestException;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
+import ppztw.AdvertBoard.Model.Advert;
 import ppztw.AdvertBoard.Model.Category;
 import ppztw.AdvertBoard.Model.Subcategory;
 import ppztw.AdvertBoard.Payload.ApiResponse;
@@ -16,12 +19,13 @@ import ppztw.AdvertBoard.Repository.CategoryRepository;
 import ppztw.AdvertBoard.Repository.SubcategoryRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
+import ppztw.AdvertBoard.Util.PageUtils;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/api/category")
 public class CategoryController {
 
     private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
@@ -77,5 +81,14 @@ public class CategoryController {
     @PreAuthorize("permitAll()")
     public List<Category> getCategory() {
         return categoryRepository.findAll();
+    }
+
+    @GetMapping("/get")
+    @PreAuthorize("permitAll()")
+    public Page<Advert> getCategoryAdverts(@RequestParam String categoryName, Pageable pageable) {
+        Category category = categoryRepository.findByCategoryName(categoryName)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "name", categoryName));
+        PageUtils<Advert> pageUtils = new PageUtils<>();
+        return pageUtils.getPage(category.getAdverts(), pageable);
     }
 }
