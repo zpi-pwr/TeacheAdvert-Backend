@@ -1,12 +1,15 @@
 package ppztw.AdvertBoard.Model;
 
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
 @Entity
 @Table(name = "subcategories", uniqueConstraints = {
         @UniqueConstraint(columnNames = "subcategory_name")
@@ -17,21 +20,19 @@ public class Subcategory {
     @Column(name = "subcategory_id")
     private Long id;
 
-    @Getter(value = AccessLevel.PUBLIC)
-    @Setter(value = AccessLevel.PUBLIC)
     @Column(name = "subcategory_name", nullable = false)
     private String subcategoryName;
 
-    @Getter(value = AccessLevel.PUBLIC)
-    @Setter(value = AccessLevel.PUBLIC)
     private String description;
 
-    @Getter(value = AccessLevel.PUBLIC)
-    @Setter(value = AccessLevel.PUBLIC)
     @ManyToOne
     @JoinColumn(name = "category_name")
     @JsonBackReference
     private Category parentCategory;
+
+    @OneToMany
+    @JsonBackReference
+    private List<Advert> adverts;
 
     public void changeCategory(Category newCategory) {
         if(this.parentCategory != null) {
@@ -41,4 +42,11 @@ public class Subcategory {
         newCategory.getSubCategories().add(this);
         this.parentCategory = newCategory;
     }
+
+    public void addAdvert(Advert advert) {
+        if (adverts == null)
+            adverts = new ArrayList<>();
+        adverts.add(advert);
+    }
+
 }

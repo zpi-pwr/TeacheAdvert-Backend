@@ -61,8 +61,10 @@ public class AdvertController {
                 user);
         advertList.add(advert);
         user.setAdverts(advertList);
+        subcategory.addAdvert(advert);
 
         userRepository.save(user);
+        subcategoryRepository.save(subcategory);
 
         return ResponseEntity.ok(new ApiResponse(true, "Added new advert"));
     }
