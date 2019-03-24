@@ -57,7 +57,7 @@ public class CategoryController {
 
     @PostMapping("/remove")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> removeCategory(@CurrentUser UserPrincipal userPrincipal, String categoryName) {
+    public ResponseEntity<?> removeCategory(@CurrentUser UserPrincipal userPrincipal, @RequestParam String categoryName) {
         Category category = categoryRepository.findByCategoryName(categoryName)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "name", categoryName));
 
