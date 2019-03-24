@@ -1,7 +1,7 @@
 package ppztw.AdvertBoard.Model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,7 +33,7 @@ public class Advert {
     @OneToMany(cascade = CascadeType.ALL)
     private List<ImgUrl> imgUrls;
 
-    @JsonManagedReference
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     private Subcategory subcategory;
 
