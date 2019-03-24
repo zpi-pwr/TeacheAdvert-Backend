@@ -24,7 +24,7 @@ public class Advert {
     @Column(nullable = false)
     private String title;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Tag> tags;
 
     @Column(nullable = false)
