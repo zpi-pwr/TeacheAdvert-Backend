@@ -11,7 +11,6 @@ import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Category;
 import ppztw.AdvertBoard.Model.Subcategory;
 import ppztw.AdvertBoard.Payload.ApiResponse;
-import ppztw.AdvertBoard.Payload.CreateCategoryRequest;
 import ppztw.AdvertBoard.Payload.CreateSubcategoryRequest;
 import ppztw.AdvertBoard.Repository.CategoryRepository;
 import ppztw.AdvertBoard.Repository.SubcategoryRepository;
@@ -19,9 +18,7 @@ import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/subcategory")
@@ -102,7 +99,8 @@ public class SubcategoryController {
 
     @GetMapping("/all")
     @PreAuthorize("permitAll()")
-    public List<Subcategory> getSubcategory() {
+    public List<Subcategory> getAllSubcategories() {
         return subCategoryRepository.findAll();
     }
+
 }
