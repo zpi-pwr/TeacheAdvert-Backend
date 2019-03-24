@@ -1,13 +1,12 @@
 package ppztw.AdvertBoard.Model;
 
-import java.util.List;
-
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,5 +35,12 @@ public class Category {
 
     public void removeSubcategory(Subcategory subCategory) {
         subCategories.remove(subCategory);
+    }
+
+    public List<Advert> getAdverts() {
+        List<Advert> adverts = new ArrayList<>();
+        for (Subcategory subcategory : subCategories)
+            adverts.addAll(subcategory.getAdverts());
+        return adverts;
     }
 }
