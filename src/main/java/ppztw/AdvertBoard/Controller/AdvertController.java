@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/advert")
+@RequestMapping("/advert")
 public class AdvertController {
 
     @Autowired

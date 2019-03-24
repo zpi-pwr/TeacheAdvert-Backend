@@ -12,19 +12,16 @@ import ppztw.AdvertBoard.Model.Category;
 import ppztw.AdvertBoard.Model.Subcategory;
 import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Payload.CreateCategoryRequest;
-import ppztw.AdvertBoard.Payload.CreateSubcategoryRequest;
 import ppztw.AdvertBoard.Repository.CategoryRepository;
 import ppztw.AdvertBoard.Repository.SubcategoryRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/category")
 public class CategoryController {
 
     private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);

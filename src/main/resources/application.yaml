@@ -1,3 +1,6 @@
+server:
+  servlet:
+    contextPath: /api
 spring:
   datasource:
     url: jdbc:postgresql://ec2-54-247-70-127.eu-west-1.compute.amazonaws.com:5432/d9je0afc501g0l

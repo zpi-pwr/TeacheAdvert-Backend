@@ -22,7 +22,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/subcategory")
+@RequestMapping("/subcategory")
 public class SubcategoryController {
 
     private static final Logger logger = LoggerFactory.getLogger(SubcategoryController.class);
