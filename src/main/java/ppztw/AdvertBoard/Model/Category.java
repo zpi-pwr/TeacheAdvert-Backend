@@ -1,5 +1,6 @@
 package ppztw.AdvertBoard.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +38,7 @@ public class Category {
         subCategories.remove(subCategory);
     }
 
+    @JsonIgnore
     public List<Advert> getAdverts() {
         List<Advert> adverts = new ArrayList<>();
         for (Subcategory subcategory : subCategories)
