@@ -24,7 +24,7 @@ public class Advert {
     @Column(nullable = false)
     private String title;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Tag> tags;
 
     @Column(nullable = false)
@@ -49,15 +49,13 @@ public class Advert {
     private User user;
 
 
-    public Advert(String title, List<String> tags, String description, List<String> imgUrls,
+    public Advert(String title, List<Tag> tags, String description, List<String> imgUrls,
                   Subcategory subcategory, User user) {
         this.title = title;
         this.tags = new ArrayList<>();
         this.imgUrls = new ArrayList<>();
         this.description = description;
-
-        for (String tag : tags)
-            this.tags.add(new Tag(tag));
+        this.tags = tags;
 
         for (String imgUrl : imgUrls)
             this.imgUrls.add(new ImgUrl(imgUrl));

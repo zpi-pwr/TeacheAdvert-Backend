@@ -14,6 +14,7 @@ import ppztw.AdvertBoard.Payload.Advert.EditAdvertRequest;
 import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Repository.AdvertRepository;
 import ppztw.AdvertBoard.Repository.SubcategoryRepository;
+import ppztw.AdvertBoard.Repository.TagRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
@@ -38,6 +39,9 @@ public class AdvertController {
     @Autowired
     private AdvertRepository advertRepository;
 
+    @Autowired
+    private TagRepository tagRepository;
+
     @PostMapping("/add")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> addAdvert(@CurrentUser UserPrincipal userPrincipal,
@@ -55,9 +59,19 @@ public class AdvertController {
                 createAdvertRequest.getSubcategory()).orElseThrow(() ->
                 new ResourceNotFoundException(
                         "Subcategory", "name", createAdvertRequest.getSubcategory()));
+
+
+        List<Tag> tags = new ArrayList<>();
+        if (createAdvertRequest.getTags() != null)
+            for (String tag : createAdvertRequest.getTags()) {
+                Tag tempTag = (tagRepository.findByName(tag).orElseGet(() -> new Tag(tag)));
+                tags.add(tempTag);
+            }
+
+
         Advert advert = new Advert(
                 createAdvertRequest.getTitle(),
-                createAdvertRequest.getTags(),
+                tags,
                 createAdvertRequest.getDescription(),
                 createAdvertRequest.getImgUrls(), subcategory,
                 user);
@@ -91,11 +105,12 @@ public class AdvertController {
 
         if (editAdvertRequest.getTags() != null) {
             List<Tag> tags = new ArrayList<>();
-            for (String tag : editAdvertRequest.getTags())
-                tags.add(new Tag(tag));
+            for (String tag : editAdvertRequest.getTags()) {
+                Tag tempTag = (tagRepository.findByName(tag).orElseGet(() -> new Tag(tag)));
+                tags.add(tempTag);
+            }
             advert.setTags(tags);
         }
-
         if (editAdvertRequest.getTitle() != null)
             advert.setTitle(editAdvertRequest.getTitle());
 
