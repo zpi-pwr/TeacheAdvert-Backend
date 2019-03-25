@@ -21,9 +21,6 @@ public class CreateAdvertRequest {
     @NotBlank
     private String description;
 
-    @Nullable
-    private List<String> imgUrls;
-
     @NotBlank
     private String subcategory;
 }
