@@ -46,7 +46,7 @@ public class AdvertController {
     @Autowired
     private ImageRepository imageRepository;
 
-    @PostMapping(value = "/add")
+    @PostMapping(value = "/add", consumes = {"multipart/form-data"})
     @PreAuthorize("hasRole('USER')")
     @Transactional
     public ResponseEntity<?> addAdvert(@CurrentUser UserPrincipal userPrincipal,
@@ -74,10 +74,18 @@ public class AdvertController {
             }
 
         Image img = null;
+        String extension = "";
+
         if (image != null) {
-            if (Objects.equals(image.getContentType(), "image/png")) {
+            String fileName = image.getOriginalFilename();
+
+            int i = fileName.lastIndexOf('.');
+            if (i > 0) {
+                extension = fileName.substring(i + 1);
+            }
+            if (extension.equals("png")) {
                 try {
-                    img = new Image(image.getName(), image.getBytes());
+                    img = new Image(fileName, image.getBytes());
                     imageRepository.save(img);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -116,10 +124,16 @@ public class AdvertController {
 
 
         if (image != null) {
-            if (Objects.equals(image.getContentType(), "image/png")) {
+            String fileName = image.getOriginalFilename();
+            String extension = "";
+            int i = fileName.lastIndexOf('.');
+            if (i > 0) {
+                extension = fileName.substring(i + 1);
+            }
+            if (Objects.equals(extension, "image/png")) {
                 Image img = null;
                 try {
-                    img = new Image(image.getName(), image.getBytes());
+                    img = new Image(fileName, image.getBytes());
                     advert.setImage(img);
                     imageRepository.save(img);
                 } catch (IOException e) {
