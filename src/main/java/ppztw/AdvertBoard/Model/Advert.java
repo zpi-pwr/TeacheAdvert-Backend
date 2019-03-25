@@ -30,7 +30,8 @@ public class Advert {
     @Column(nullable = false)
     private String description;
 
-    @OneToOne
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.ALL)
     private Image image;
 
     @JsonIgnore
