@@ -46,7 +46,7 @@ public class AdvertController {
     @Autowired
     private ImageRepository imageRepository;
 
-    @PostMapping(value = "/add", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/add")
     @PreAuthorize("hasRole('USER')")
     @Transactional
     public ResponseEntity<?> addAdvert(@CurrentUser UserPrincipal userPrincipal,
@@ -110,7 +110,7 @@ public class AdvertController {
         return ResponseEntity.ok(new ApiResponse(true, "Added new advert"));
     }
 
-    @PostMapping(value = "/edit", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/edit")
     @PreAuthorize("hasRole('USER')")
     @Transactional
     public ResponseEntity<?> editAdvert(@CurrentUser UserPrincipal userPrincipal,
