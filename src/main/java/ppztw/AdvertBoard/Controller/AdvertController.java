@@ -1,5 +1,6 @@
 package ppztw.AdvertBoard.Controller;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.*;
 import ppztw.AdvertBoard.Payload.Advert.CreateAdvertRequest;
 import ppztw.AdvertBoard.Payload.Advert.EditAdvertRequest;
+import ppztw.AdvertBoard.Payload.Advert.ImagePayload;
 import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Repository.*;
 import ppztw.AdvertBoard.Security.CurrentUser;
@@ -46,12 +48,11 @@ public class AdvertController {
     @Autowired
     private ImageRepository imageRepository;
 
-    @PostMapping(value = "/add", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/add")
     @PreAuthorize("hasRole('USER')")
     @Transactional
     public ResponseEntity<?> addAdvert(@CurrentUser UserPrincipal userPrincipal,
-                                       @Valid @RequestPart("advertInfo") CreateAdvertRequest createAdvertRequest,
-                                       @Valid @RequestPart(value = "image", required = false) MultipartFile image) {
+                                       @Valid @RequestBody CreateAdvertRequest createAdvertRequest) {
 
         User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() ->
                 new ResourceNotFoundException("User", "id", userPrincipal.getId()));
@@ -75,21 +76,13 @@ public class AdvertController {
 
         Image img = null;
         String extension = "";
+        ImagePayload imagePayload = createAdvertRequest.getImage();
 
-        if (image != null) {
-            String fileName = image.getOriginalFilename();
-
-            int i = fileName.lastIndexOf('.');
-            if (i > 0) {
-                extension = fileName.substring(i + 1);
-            }
-            if (extension.equals("png")) {
-                try {
-                    img = new Image(fileName, image.getBytes());
+        if (imagePayload != null) {
+            if (imagePayload.getType().equals("image/png")) {
+                img = new Image(imagePayload.getName(),
+                        Base64.decodeBase64(imagePayload.getBase64()));
                     imageRepository.save(img);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         }
 
@@ -110,7 +103,7 @@ public class AdvertController {
         return ResponseEntity.ok(new ApiResponse(true, "Added new advert"));
     }
 
-    @PostMapping(value = "/edit", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/edit")
     @PreAuthorize("hasRole('USER')")
     @Transactional
     public ResponseEntity<?> editAdvert(@CurrentUser UserPrincipal userPrincipal,
