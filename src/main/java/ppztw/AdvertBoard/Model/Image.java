@@ -1,6 +1,7 @@
 package ppztw.AdvertBoard.Model;
 
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +34,7 @@ public class Image {
         this.pic = pic;
     }
 
-
+    @JsonAnyGetter
     private String getBase64() {
         return Base64.encodeBase64String(pic);
     }
