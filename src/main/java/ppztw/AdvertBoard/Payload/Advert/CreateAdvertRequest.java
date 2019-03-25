@@ -23,4 +23,7 @@ public class CreateAdvertRequest {
 
     @NotBlank
     private String subcategory;
+
+    @Nullable
+    private ImagePayload image;
 }

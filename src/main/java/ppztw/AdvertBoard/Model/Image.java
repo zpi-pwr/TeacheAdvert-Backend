@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.tomcat.util.codec.binary.Base64;
 
 import javax.persistence.*;
 
@@ -30,5 +31,10 @@ public class Image {
     public Image(String filename, byte[] pic) {
         this.filename = filename;
         this.pic = pic;
+    }
+
+
+    private String getBase64() {
+        return Base64.encodeBase64String(pic);
     }
 }
