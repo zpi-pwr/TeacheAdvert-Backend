@@ -1,6 +1,7 @@
 package ppztw.AdvertBoard.Model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,9 +18,11 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String filename;
 
+    @JsonIgnore
     @Lob
     @Column(nullable = false)
     private byte[] pic;
