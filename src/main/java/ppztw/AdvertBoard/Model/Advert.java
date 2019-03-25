@@ -30,8 +30,8 @@ public class Advert {
     @Column(nullable = false)
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<ImgUrl> imgUrls;
+    @OneToOne
+    private Image image;
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
@@ -49,17 +49,13 @@ public class Advert {
     private User user;
 
 
-    public Advert(String title, List<Tag> tags, String description, List<String> imgUrls,
+    public Advert(String title, List<Tag> tags, String description, Image image,
                   Subcategory subcategory, User user) {
         this.title = title;
         this.tags = new ArrayList<>();
-        this.imgUrls = new ArrayList<>();
         this.description = description;
+        this.image = image;
         this.tags = tags;
-
-        for (String imgUrl : imgUrls)
-            this.imgUrls.add(new ImgUrl(imgUrl));
-
         this.subcategory = subcategory;
         this.date = LocalDate.now();
         this.user = user;

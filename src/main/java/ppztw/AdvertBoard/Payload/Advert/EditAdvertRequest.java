@@ -23,7 +23,4 @@ public class EditAdvertRequest {
     @Nullable
     private String description;
 
-    @Nullable
-    private List<String> imgUrls;
-
 }
