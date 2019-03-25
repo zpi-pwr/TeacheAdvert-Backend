@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 import ppztw.AdvertBoard.Advert.AdvertUserService;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.*;
@@ -21,6 +21,7 @@ import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -44,10 +45,11 @@ public class AdvertController {
     @Autowired
     private TagRepository tagRepository;
 
-    @PostMapping("/add")
+    @PostMapping(value = "/add", consumes = {"multipart/form-data"})
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> addAdvert(@CurrentUser UserPrincipal userPrincipal,
-                                       @Valid @RequestBody CreateAdvertRequest createAdvertRequest) {
+                                       @Valid @RequestPart("advertInfo") CreateAdvertRequest createAdvertRequest,
+                                       @Valid @RequestPart("image") MultipartFile image) {
 
         User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() ->
                 new ResourceNotFoundException("User", "id", userPrincipal.getId()));
@@ -71,11 +73,13 @@ public class AdvertController {
             }
 
         Image img = null;
-        if (createAdvertRequest.getImage() != null) {
-            CommonsMultipartFile imageFile = createAdvertRequest.getImage();
-            System.out.println(imageFile.getContentType());
-            if (Objects.equals(imageFile.getContentType(), "image/png")) {
-                img = new Image(imageFile.getName(), imageFile.getBytes());
+        if (image != null) {
+            if (Objects.equals(image.getContentType(), "image/png")) {
+                try {
+                    img = new Image(image.getName(), image.getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -99,7 +103,8 @@ public class AdvertController {
     @PostMapping("/edit")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> editAdvert(@CurrentUser UserPrincipal userPrincipal,
-                                        @RequestBody EditAdvertRequest editAdvertRequest) {
+                                        @Valid @RequestPart EditAdvertRequest editAdvertRequest,
+                                        @Valid @RequestPart("image") MultipartFile image) {
         User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() ->
                 new ResourceNotFoundException("User", "id", userPrincipal.getId()));
 
@@ -107,12 +112,15 @@ public class AdvertController {
                 new ResourceNotFoundException("Advert", "id", editAdvertRequest.getId()));
 
 
-        if (editAdvertRequest.getImage() != null) {
-            CommonsMultipartFile imageFile = editAdvertRequest.getImage();
-            System.out.println(imageFile.getContentType());
-            if (Objects.equals(imageFile.getContentType(), "image/png")) {
-                Image img = new Image(imageFile.getName(), imageFile.getBytes());
-                advert.setImage(img);
+        if (image != null) {
+            if (Objects.equals(image.getContentType(), "image/png")) {
+                Image img = null;
+                try {
+                    img = new Image(image.getName(), image.getBytes());
+                    advert.setImage(img);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
