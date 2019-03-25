@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import ppztw.AdvertBoard.Advert.AdvertUserService;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.*;
@@ -21,10 +20,8 @@ import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/advert")
@@ -107,8 +104,7 @@ public class AdvertController {
     @PreAuthorize("hasRole('USER')")
     @Transactional
     public ResponseEntity<?> editAdvert(@CurrentUser UserPrincipal userPrincipal,
-                                        @Valid @RequestPart EditAdvertRequest editAdvertRequest,
-                                        @Valid @RequestPart("image") MultipartFile image) {
+                                        @Valid @RequestPart EditAdvertRequest editAdvertRequest) {
         User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() ->
                 new ResourceNotFoundException("User", "id", userPrincipal.getId()));
 
@@ -116,25 +112,18 @@ public class AdvertController {
                 new ResourceNotFoundException("Advert", "id", editAdvertRequest.getId()));
 
 
-        if (image != null) {
-            String fileName = image.getOriginalFilename();
-            String extension = "";
-            int i = fileName.lastIndexOf('.');
-            if (i > 0) {
-                extension = fileName.substring(i + 1);
-            }
-            if (Objects.equals(extension, "image/png")) {
-                Image img = null;
-                try {
-                    img = new Image(fileName, image.getBytes());
-                    advert.setImage(img);
-                    imageRepository.save(img);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        Image img = null;
+        String extension = "";
+        ImagePayload imagePayload = editAdvertRequest.getImage();
+
+        if (imagePayload != null) {
+            if (imagePayload.getType().equals("image/png")) {
+                img = new Image(imagePayload.getName(),
+                        Base64.decodeBase64(imagePayload.getBase64()));
+                imageRepository.save(img);
+                advert.setImage(img);
             }
         }
-
         if (editAdvertRequest.getTags() != null) {
             List<Tag> tags = new ArrayList<>();
             for (String tag : editAdvertRequest.getTags()) {
