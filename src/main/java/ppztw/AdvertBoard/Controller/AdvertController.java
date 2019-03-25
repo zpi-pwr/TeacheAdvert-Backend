@@ -100,7 +100,7 @@ public class AdvertController {
         return ResponseEntity.ok(new ApiResponse(true, "Added new advert"));
     }
 
-    @PostMapping("/edit")
+    @PostMapping(value = "/edit", consumes = {"multipart/form-data"})
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> editAdvert(@CurrentUser UserPrincipal userPrincipal,
                                         @Valid @RequestPart EditAdvertRequest editAdvertRequest,
