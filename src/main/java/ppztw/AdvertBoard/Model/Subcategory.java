@@ -50,4 +50,11 @@ public class Subcategory {
         adverts.add(advert);
     }
 
+    public List<Long> getAdvertsIds() {
+        List<Long> idList = new ArrayList<>();
+        for (Advert advert : adverts)
+            idList.add(advert.getId());
+        return idList;
+    }
+
 }

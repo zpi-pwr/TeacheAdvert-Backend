@@ -39,10 +39,10 @@ public class Category {
     }
 
     @JsonIgnore
-    public List<Advert> getAdverts() {
-        List<Advert> adverts = new ArrayList<>();
+    public List<Long> getAdvertsIds() {
+        List<Long> adverts = new ArrayList<>();
         for (Subcategory subcategory : subCategories)
-            adverts.addAll(subcategory.getAdverts());
+            adverts.addAll(subcategory.getAdvertsIds());
         return adverts;
     }
 }
