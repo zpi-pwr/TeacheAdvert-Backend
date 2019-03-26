@@ -31,6 +31,7 @@ public class Advert {
     @Column(nullable = false)
     private String description;
 
+    @Lob
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     private Image image;
