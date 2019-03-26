@@ -24,7 +24,6 @@ public class Image {
     private String filename;
 
     @JsonIgnore
-    @Lob
     @Column(nullable = false)
     private byte[] pic;
 
