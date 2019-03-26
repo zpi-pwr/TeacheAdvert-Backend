@@ -24,7 +24,6 @@ public class Image {
     private String filename;
 
     @JsonIgnore
-    @Lob
     @Column(nullable = false)
     private byte[] pic;
 
@@ -33,8 +32,8 @@ public class Image {
         this.pic = pic;
     }
 
-
-    private String getBase64() {
+    @JsonIgnore
+    public String getBase64() {
         return Base64.encodeBase64String(pic);
     }
 }

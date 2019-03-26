@@ -15,6 +15,7 @@ import ppztw.AdvertBoard.Model.Category;
 import ppztw.AdvertBoard.Model.Subcategory;
 import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Payload.CreateSubcategoryRequest;
+import ppztw.AdvertBoard.Repository.AdvertRepository;
 import ppztw.AdvertBoard.Repository.CategoryRepository;
 import ppztw.AdvertBoard.Repository.SubcategoryRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
@@ -22,6 +23,7 @@ import ppztw.AdvertBoard.Security.UserPrincipal;
 import ppztw.AdvertBoard.Util.PageUtils;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -35,6 +37,9 @@ public class SubcategoryController {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private AdvertRepository advertRepository;
 
 
     @PostMapping("/add")
@@ -114,6 +119,10 @@ public class SubcategoryController {
         Subcategory subcategory = subCategoryRepository.findBySubcategoryName(subcategoryName)
                 .orElseThrow(() -> new ResourceNotFoundException("Subcategory", "name", subcategoryName));
         PageUtils<Advert> pageUtils = new PageUtils<>();
-        return pageUtils.getPage(subcategory.getAdverts(), pageable);
+        List<Long> advertIds = subcategory.getAdvertsIds();
+        List<Advert> adverts = new ArrayList<>();
+        Iterable<Advert> iterable = advertRepository.findAllById(advertIds);
+        iterable.forEach(adverts::add);
+        return pageUtils.getPage(adverts, pageable);
     }
 }

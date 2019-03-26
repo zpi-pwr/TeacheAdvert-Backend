@@ -15,6 +15,7 @@ import ppztw.AdvertBoard.Model.Category;
 import ppztw.AdvertBoard.Model.Subcategory;
 import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Payload.CreateCategoryRequest;
+import ppztw.AdvertBoard.Repository.AdvertRepository;
 import ppztw.AdvertBoard.Repository.CategoryRepository;
 import ppztw.AdvertBoard.Repository.SubcategoryRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
@@ -22,6 +23,7 @@ import ppztw.AdvertBoard.Security.UserPrincipal;
 import ppztw.AdvertBoard.Util.PageUtils;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -35,6 +37,9 @@ public class CategoryController {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private AdvertRepository advertRepository;
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('USER')")
@@ -89,6 +94,10 @@ public class CategoryController {
         Category category = categoryRepository.findByCategoryName(categoryName)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "name", categoryName));
         PageUtils<Advert> pageUtils = new PageUtils<>();
-        return pageUtils.getPage(category.getAdverts(), pageable);
+        List<Long> advertIds = category.getAdvertsIds();
+        List<Advert> adverts = new ArrayList<>();
+        Iterable<Advert> iterable = advertRepository.findAllById(advertIds);
+        iterable.forEach(adverts::add);
+        return pageUtils.getPage(adverts, pageable);
     }
 }
