@@ -1,6 +1,7 @@
 package ppztw.AdvertBoard.Model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,7 @@ public class Advert {
     @Column(nullable = false)
     private String description;
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     private Image image;
 
@@ -47,6 +49,11 @@ public class Advert {
     @ManyToOne
     @JsonBackReference
     private User user;
+
+    @JsonGetter
+    public String getBase64() {
+        return "data:image/png:base64," + image.getBase64();
+    }
 
 
     public Advert(String title, List<Tag> tags, String description, Image image,
