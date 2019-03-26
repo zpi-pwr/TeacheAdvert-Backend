@@ -52,7 +52,9 @@ public class Advert {
 
     @JsonGetter
     public String getBase64() {
-        return "data:image/png:base64," + image.getBase64();
+        if (image != null)
+            return "data:image/png:base64," + image.getBase64();
+        else return null;
     }
 
 
