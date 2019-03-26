@@ -54,7 +54,7 @@ public class Advert {
     public String getBase64() {
         if (image != null)
             return "data:image/png:base64," + image.getBase64();
-        else return null;
+        else return "";
     }
 
 
