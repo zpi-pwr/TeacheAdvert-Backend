@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ppztw.AdvertBoard.Exception.BadRequestException;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Advert;
 import ppztw.AdvertBoard.Model.Category;
@@ -39,14 +38,18 @@ public class CategoryController {
     @PostMapping("/add")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> addCategory(@CurrentUser UserPrincipal userPrincipal, @Valid @RequestBody CreateCategoryRequest createCategoryRequest) {
-        if(categoryRepository.existsByCategoryName(createCategoryRequest.getCategoryName())) {
-            throw new BadRequestException("Category with this name already exists!");
-        }
-
 
         Category category = new Category();
         category.setCategoryName(createCategoryRequest.getCategoryName());
         category.setDescription(createCategoryRequest.getDescription());
+
+        Long parentId = createCategoryRequest.getParentId();
+        if (parentId != null) {
+            Category parent = categoryRepository.findById(parentId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Category", "id", parentId));
+
+            category.setParentCategory(parent);
+        }
 
         logger.info(String.format("Admin %s has created category with name %s", userPrincipal.getName(), createCategoryRequest.getCategoryName()));
 
