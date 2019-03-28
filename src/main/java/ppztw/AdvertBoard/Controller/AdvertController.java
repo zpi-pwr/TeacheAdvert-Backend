@@ -31,7 +31,7 @@ public class AdvertController {
     private UserRepository userRepository;
 
     @Autowired
-    private SubcategoryRepository subcategoryRepository;
+    private CategoryRepository categoryRepository;
 
     @Autowired
     private AdvertUserService advertUserService;
@@ -58,7 +58,7 @@ public class AdvertController {
         if (advertList == null)
             advertList = new ArrayList<Advert>();
 
-        Subcategory subcategory = subcategoryRepository.findBySubcategoryName(
+        Category subcategory = categoryRepository.findByCategoryName(
                 createAdvertRequest.getSubcategory()).orElseThrow(() ->
                 new ResourceNotFoundException(
                         "Subcategory", "name", createAdvertRequest.getSubcategory()));
@@ -95,7 +95,7 @@ public class AdvertController {
         subcategory.addAdvert(advert);
 
         userRepository.save(user);
-        subcategoryRepository.save(subcategory);
+        categoryRepository.save(subcategory);
 
         return ResponseEntity.ok(new ApiResponse(true, "Added new advert"));
     }

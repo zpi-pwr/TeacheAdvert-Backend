@@ -12,12 +12,10 @@ import ppztw.AdvertBoard.Exception.BadRequestException;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Advert;
 import ppztw.AdvertBoard.Model.Category;
-import ppztw.AdvertBoard.Model.Subcategory;
 import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Payload.CreateCategoryRequest;
 import ppztw.AdvertBoard.Repository.AdvertRepository;
 import ppztw.AdvertBoard.Repository.CategoryRepository;
-import ppztw.AdvertBoard.Repository.SubcategoryRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 import ppztw.AdvertBoard.Util.PageUtils;
@@ -31,9 +29,6 @@ import java.util.List;
 public class CategoryController {
 
     private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
-
-    @Autowired
-    private SubcategoryRepository subCategoryRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -66,12 +61,12 @@ public class CategoryController {
         Category category = categoryRepository.findByCategoryName(categoryName)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "name", categoryName));
 
-        List<Subcategory> subcategories = category.getSubCategories();
+        List<Category> subcategories = category.getSubcategories();
 
         for(int i = 0; i < subcategories.size(); i++) {
-            Subcategory subcategory = subcategories.get(i);
+            Category subcategory = subcategories.get(i);
             subcategory.setParentCategory(null);
-            subCategoryRepository.save(subcategory);
+            categoryRepository.save(subcategory);
         }
 
         categoryRepository.delete(category);
@@ -90,11 +85,11 @@ public class CategoryController {
 
     @GetMapping("/get")
     @PreAuthorize("permitAll()")
-    public Page<Advert> getCategoryAdverts(@RequestParam String categoryName, Pageable pageable) {
-        Category category = categoryRepository.findByCategoryName(categoryName)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "name", categoryName));
+    public Page<Advert> getCategoryAdverts(@RequestParam Long categoryId, Pageable pageable) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
         PageUtils<Advert> pageUtils = new PageUtils<>();
-        List<Long> advertIds = category.getAdvertsIds();
+        List<Long> advertIds = category.getAdvertsId();
         List<Advert> adverts = new ArrayList<>();
         Iterable<Advert> iterable = advertRepository.findAllById(advertIds);
         iterable.forEach(adverts::add);
