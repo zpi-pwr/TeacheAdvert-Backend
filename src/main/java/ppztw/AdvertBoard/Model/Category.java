@@ -1,5 +1,6 @@
 package ppztw.AdvertBoard.Model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,7 @@ public class Category {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @Nullable
+    @JsonBackReference
     private Category parentCategory;
 
     @OneToMany(mappedBy="parentCategory")
