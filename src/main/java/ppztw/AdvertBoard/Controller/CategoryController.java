@@ -60,9 +60,9 @@ public class CategoryController {
 
     @PostMapping("/remove")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> removeCategory(@CurrentUser UserPrincipal userPrincipal, @RequestParam String categoryName) {
-        Category category = categoryRepository.findByCategoryName(categoryName)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "name", categoryName));
+    public ResponseEntity<?> removeCategory(@CurrentUser UserPrincipal userPrincipal, @RequestParam Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
 
         List<Category> subcategories = category.getSubcategories();
 
@@ -74,8 +74,8 @@ public class CategoryController {
 
         categoryRepository.delete(category);
 
-        logger.info(String.format("Admin %s has removed category with name %s"
-                , userPrincipal.getName(), categoryName));
+        logger.info(String.format("Admin %s has removed category with id %s"
+                , userPrincipal.getName(), id));
 
         return ResponseEntity.ok(new ApiResponse(true, "Category removed successfully!"));
     }
