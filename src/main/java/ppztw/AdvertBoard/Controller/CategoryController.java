@@ -18,6 +18,7 @@ import ppztw.AdvertBoard.Repository.CategoryRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 import ppztw.AdvertBoard.Util.PageUtils;
+import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 import ppztw.AdvertBoard.View.CategoryView;
 
 import javax.validation.Valid;
@@ -92,14 +93,14 @@ public class CategoryController {
 
     @GetMapping("/get")
     @PreAuthorize("permitAll()")
-    public Page<Advert> getCategoryAdverts(@RequestParam Long categoryId, Pageable pageable) {
+    public Page<AdvertSummaryView> getCategoryAdverts(@RequestParam Long categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
-        PageUtils<Advert> pageUtils = new PageUtils<>();
-        List<Long> advertIds = category.getAdvertsId();
-        List<Advert> adverts = new ArrayList<>();
-        Iterable<Advert> iterable = advertRepository.findAllById(advertIds);
-        iterable.forEach(adverts::add);
-        return pageUtils.getPage(adverts, pageable);
+        PageUtils<AdvertSummaryView> pageUtils = new PageUtils<>();
+        List<Advert> adverts = category.getAdverts();
+        List<AdvertSummaryView> advertViews = new ArrayList<>();
+        for (Advert advert : adverts)
+            advertViews.add(new AdvertSummaryView(advert));
+        return pageUtils.getPage(advertViews, pageable);
     }
 }
