@@ -18,6 +18,7 @@ import ppztw.AdvertBoard.Repository.CategoryRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 import ppztw.AdvertBoard.Util.PageUtils;
+import ppztw.AdvertBoard.View.CategoryView;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -82,8 +83,11 @@ public class CategoryController {
 
     @GetMapping("/all")
     @PreAuthorize("permitAll()")
-    public List<Category> getCategory() {
-        return categoryRepository.findAll();
+    public CategoryView getCategory() {
+        Category root = categoryRepository.findById(0L)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", "root"));
+
+        return new CategoryView(root);
     }
 
     @GetMapping("/get")
