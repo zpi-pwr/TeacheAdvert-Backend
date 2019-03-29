@@ -16,6 +16,7 @@ import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Repository.*;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
+import ppztw.AdvertBoard.View.Advert.AdvertDetailsView;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -155,8 +156,10 @@ public class AdvertController {
 
     @GetMapping("get")
     @PreAuthorize("permitAll()")
-    public Advert getAdvert(@RequestParam Long id) {
-        return advertRepository.findById(id)
+    public AdvertDetailsView getAdvert(@RequestParam Long id) {
+        Advert advert = advertRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Advert", "id", id));
+
+        return new AdvertDetailsView(advert);
     }
 }
