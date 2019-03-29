@@ -41,13 +41,12 @@ public class Category {
         adverts.add(advert);
     }
 
-    public List<Long> getAdvertsId() {
-        List<Long> idList = new ArrayList<>();
-        for (Advert advert : adverts)
-            idList.add(advert.getId());
+    public List<Advert> getAdverts() {
+        List<Advert> advertList = new ArrayList<>();
+        advertList.addAll(adverts);
         for (Category subcategory : subcategories)
-            idList.addAll(subcategory.getAdvertsId());
-        return idList;
+            advertList.addAll(subcategory.getAdverts());
+        return advertList;
     }
 
 }
