@@ -2,8 +2,6 @@ package ppztw.AdvertBoard.Controller;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,10 +56,10 @@ public class AdvertController {
         if (advertList == null)
             advertList = new ArrayList<Advert>();
 
-        Category subcategory = categoryRepository.findByCategoryName(
-                createAdvertRequest.getSubcategory()).orElseThrow(() ->
+        Category subcategory = categoryRepository.findById(
+                createAdvertRequest.getCategory()).orElseThrow(() ->
                 new ResourceNotFoundException(
-                        "Subcategory", "name", createAdvertRequest.getSubcategory()));
+                        "Category", "id", createAdvertRequest.getCategory()));
 
 
         List<Tag> tags = new ArrayList<>();
@@ -153,12 +151,6 @@ public class AdvertController {
         advert.setStatus(Advert.Status.ARCHIVED);
         userRepository.save(user);
         return ResponseEntity.ok(new ApiResponse(true, "Advert removed."));
-    }
-
-    @GetMapping("all")
-    @PreAuthorize("permitAll()")
-    public Page<Advert> getAllAdverts(Pageable pageable) {
-        return advertRepository.findAll(pageable);
     }
 
     @GetMapping("get")
