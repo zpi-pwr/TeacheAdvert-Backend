@@ -9,6 +9,7 @@ import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
+import ppztw.AdvertBoard.View.User.UserMeView;
 
 @RestController
 public class UserController {
@@ -18,8 +19,10 @@ public class UserController {
 
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
-    public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-        return userRepository.findById(userPrincipal.getId())
+    public UserMeView getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
+        User user = userRepository.findById(userPrincipal.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
+        return new UserMeView(user);
+
     }
 }

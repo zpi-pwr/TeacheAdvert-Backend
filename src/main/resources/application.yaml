@@ -3,9 +3,9 @@ server:
     contextPath: /api
 spring:
   datasource:
-    url: jdbc:postgresql://ec2-54-247-70-127.eu-west-1.compute.amazonaws.com:5432/d9je0afc501g0l
-    username: xweuwzssgypgoy
-    password: aca54a4d70264e26a2bbf2f0791381a78948583d5519505df14315a16b879868
+    url: jdbc:postgresql://packy.db.elephantsql.com:5432/rmyrrehv
+    username: rmyrrehv
+    password: NVnTV7vfed0K-W7uGFD7ZmRIX1Z7MjRn
 
   jpa:
     dialect: org.hibernate.dialect.PostgreSQL9Dialect

@@ -38,7 +38,7 @@ public class Advert {
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
-    private Subcategory subcategory;
+    private Category subcategory;
 
 
     @Column(nullable = false)
@@ -60,7 +60,7 @@ public class Advert {
 
 
     public Advert(String title, List<Tag> tags, String description, Image image,
-                  Subcategory subcategory, User user) {
+                  Category subcategory, User user) {
         this.title = title;
         this.tags = new ArrayList<>();
         this.description = description;
