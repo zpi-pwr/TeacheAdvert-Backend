@@ -22,8 +22,10 @@ import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 import ppztw.AdvertBoard.View.CategoryView;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("category")
@@ -93,7 +95,11 @@ public class CategoryController {
 
     @GetMapping("/get")
     @PreAuthorize("permitAll()")
-    public Page<AdvertSummaryView> getCategoryAdverts(@RequestParam Long categoryId, Pageable pageable) {
+    public Page<AdvertSummaryView> getCategoryAdverts(
+            @RequestParam Long categoryId, Pageable pageable,
+            @RequestParam(required = false) LocalDate maxDate,
+            @RequestParam(required = false) LocalDate minDate,
+            @RequestParam(required = false) String titleContains) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
         PageUtils<AdvertSummaryView> pageUtils = new PageUtils<>();
@@ -101,6 +107,20 @@ public class CategoryController {
         List<AdvertSummaryView> advertViews = new ArrayList<>();
         for (Advert advert : adverts)
             advertViews.add(new AdvertSummaryView(advert));
+
+        if (maxDate != null)
+            advertViews = advertViews.stream()
+                    .filter(advert -> advert.getDate().isBefore(maxDate))
+                    .collect(Collectors.toList());
+        if (minDate != null)
+            advertViews = advertViews.stream()
+                    .filter(advert -> advert.getDate().isAfter(minDate))
+                    .collect(Collectors.toList());
+        if (titleContains != null)
+            advertViews = advertViews.stream()
+                    .filter(advert -> advert.getTitle().contains(titleContains))
+                    .collect(Collectors.toList());
+
         return pageUtils.getPage(advertViews, pageable);
     }
 }
