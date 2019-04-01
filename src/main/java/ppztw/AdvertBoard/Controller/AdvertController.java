@@ -2,8 +2,6 @@ package ppztw.AdvertBoard.Controller;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +16,7 @@ import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Repository.*;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
+import ppztw.AdvertBoard.View.Advert.AdvertDetailsView;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ public class AdvertController {
     private UserRepository userRepository;
 
     @Autowired
-    private SubcategoryRepository subcategoryRepository;
+    private CategoryRepository categoryRepository;
 
     @Autowired
     private AdvertUserService advertUserService;
@@ -58,10 +57,10 @@ public class AdvertController {
         if (advertList == null)
             advertList = new ArrayList<Advert>();
 
-        Subcategory subcategory = subcategoryRepository.findBySubcategoryName(
-                createAdvertRequest.getSubcategory()).orElseThrow(() ->
+        Category subcategory = categoryRepository.findById(
+                createAdvertRequest.getCategory()).orElseThrow(() ->
                 new ResourceNotFoundException(
-                        "Subcategory", "name", createAdvertRequest.getSubcategory()));
+                        "Category", "id", createAdvertRequest.getCategory()));
 
 
         List<Tag> tags = new ArrayList<>();
@@ -95,7 +94,7 @@ public class AdvertController {
         subcategory.addAdvert(advert);
 
         userRepository.save(user);
-        subcategoryRepository.save(subcategory);
+        categoryRepository.save(subcategory);
 
         return ResponseEntity.ok(new ApiResponse(true, "Added new advert"));
     }
@@ -155,16 +154,12 @@ public class AdvertController {
         return ResponseEntity.ok(new ApiResponse(true, "Advert removed."));
     }
 
-    @GetMapping("all")
-    @PreAuthorize("permitAll()")
-    public Page<Advert> getAllAdverts(Pageable pageable) {
-        return advertRepository.findAll(pageable);
-    }
-
     @GetMapping("get")
     @PreAuthorize("permitAll()")
-    public Advert getAdvert(@RequestParam Long id) {
-        return advertRepository.findById(id)
+    public AdvertDetailsView getAdvert(@RequestParam Long id) {
+        Advert advert = advertRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Advert", "id", id));
+
+        return new AdvertDetailsView(advert);
     }
 }

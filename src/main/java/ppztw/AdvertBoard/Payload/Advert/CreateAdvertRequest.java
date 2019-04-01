@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
@@ -21,8 +22,8 @@ public class CreateAdvertRequest {
     @NotBlank
     private String description;
 
-    @NotBlank
-    private String subcategory;
+    @NotNull
+    private Long category;
 
     @Nullable
     private ImagePayload image;

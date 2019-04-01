@@ -41,7 +41,7 @@ method: GET
 path: /advert/add
 header: Authorization: Bearer <TOKEN>; Content-Type: application/json
 method: POST
-request body: {"title":<TITLE>, "tags":<TAGS>, "description":<DESC>, imgUrls:<IMGURLS>, subcategory:<SUBCAT>}
+request body: {"title":<TITLE>, "tags":<TAGS>, "description":<DESC>, "image": {"base64":<B64>, "name":<NAME>, "size":<SIZE>, "type":<TYPE> }, category:<CAT_ID>}
 ```
 
 ### Edit advert
@@ -49,7 +49,7 @@ request body: {"title":<TITLE>, "tags":<TAGS>, "description":<DESC>, imgUrls:<IM
 path: /advert/edit
 header: Authorization: Bearer <TOKEN>; Content-Type: application/json
 method: POST
-request body: {"id":<ID>, "title":<TITLE>, "tags":<TAGS>, "description":<DESC>, imgUrls:<IMGURLS>}
+request body: {"id":<ID>, "title":<TITLE>, "tags":<TAGS>, "description":<DESC>, "image": {"base64":<B64>, "name":<NAME>, "size":<SIZE>, "type":<TYPE> }}
 ```
 
 ### Remove advert
@@ -81,7 +81,7 @@ request param: id
 path: /category/add
 header: Authorization: Bearer <TOKEN>; Content-Type: application/json
 method: POST
-request body: {"categoryName":<NAME>, "description":<DESC>}
+request body: {"categoryName":<NAME>, "description":<DESC>, "parentCategory":<PARENT_ID>}
 ```
 
 ### Remove category
@@ -102,46 +102,6 @@ method: GET
 ```
 path: /category/get
 method: GET
-request param: categoryName, page, limit, sort
+request param: categoryName, page, limit, sort, maxDate, minDate, titleContains
 ```
-
-## Subcategory
-
-### Add subcategory
-```
-path: /subcategory/add
-header: Authorization: Bearer <TOKEN>; Content-Type: application/json
-method: POST
-request body: {"subcategoryName":<NAME>, "description":<DESC>, "category":<CAT>}
-```
-
-### Remove subcategory
-```
-path: /subcategory/remove
-header: Authorization: Bearer <TOKEN>
-method: POST
-request param: subcategoryName
-```
-
-### Edit subcategory
-```
-path: /subcategory/add
-header: Authorization: Bearer <TOKEN>; Content-Type: application/json
-method: POST
-request param: subCategoryName, newCategoryName
-```
-
-### All subcategories
-```
-path: /subcategory/all
-method: GET
-```
-
-### Get subcategory adverts
-```
-path: /subcategory/get
-method: GET
-request param: categoryName, page, limit, sort
-```
-
 

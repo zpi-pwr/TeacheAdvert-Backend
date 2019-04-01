@@ -1,9 +1,10 @@
 package ppztw.AdvertBoard.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,9 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "categories", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "category_name")
-})
+@Table(name = "categories")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,23 +25,28 @@ public class Category {
 
     private String description;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @Nullable
+    @JsonBackReference
+    private Category parentCategory;
+
     @OneToMany(mappedBy="parentCategory")
     @JsonManagedReference
-    private List<Subcategory> subCategories;
+    private List<Category> subcategories;
 
-    public void addSubcategory(Subcategory subCategory) {
-        subCategories.add(subCategory);
+    @OneToMany
+    private List<Advert> adverts;
+
+    public void addAdvert(Advert advert) {
+        adverts.add(advert);
     }
 
-    public void removeSubcategory(Subcategory subCategory) {
-        subCategories.remove(subCategory);
+    public List<Advert> getAdverts() {
+        List<Advert> advertList = new ArrayList<>();
+        advertList.addAll(adverts);
+        for (Category subcategory : subcategories)
+            advertList.addAll(subcategory.getAdverts());
+        return advertList;
     }
 
-    @JsonIgnore
-    public List<Long> getAdvertsIds() {
-        List<Long> adverts = new ArrayList<>();
-        for (Subcategory subcategory : subCategories)
-            adverts.addAll(subcategory.getAdvertsIds());
-        return adverts;
-    }
 }
