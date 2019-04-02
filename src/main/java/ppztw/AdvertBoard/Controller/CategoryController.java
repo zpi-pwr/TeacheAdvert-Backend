@@ -40,7 +40,7 @@ public class CategoryController {
     private AdvertRepository advertRepository;
 
     @PostMapping("/add")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> addCategory(@CurrentUser UserPrincipal userPrincipal, @Valid @RequestBody CreateCategoryRequest createCategoryRequest) {
 
         Category category = new Category();
@@ -63,7 +63,7 @@ public class CategoryController {
     }
 
     @PostMapping("/remove")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN)")
     public ResponseEntity<?> removeCategory(@CurrentUser UserPrincipal userPrincipal, @RequestParam Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
