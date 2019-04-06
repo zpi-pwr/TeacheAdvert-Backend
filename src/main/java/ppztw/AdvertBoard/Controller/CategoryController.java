@@ -117,8 +117,10 @@ public class CategoryController {
         PageUtils<AdvertSummaryView> pageUtils = new PageUtils<>();
         List<Advert> adverts = category.getAdverts();
         List<AdvertSummaryView> advertViews = new ArrayList<>();
-        for (Advert advert : adverts)
-            advertViews.add(new AdvertSummaryView(advert));
+        for (Advert advert : adverts) {
+            if (advert.getStatus() != Advert.Status.ARCHIVED && advert.getStatus() != Advert.Status.BANNED)
+                advertViews.add(new AdvertSummaryView(advert));
+        }
 
         if (maxDate != null)
             advertViews = advertViews.stream()

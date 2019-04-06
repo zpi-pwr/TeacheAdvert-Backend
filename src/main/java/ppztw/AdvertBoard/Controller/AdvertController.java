@@ -74,7 +74,7 @@ public class AdvertController {
                 new ResourceNotFoundException("Advert", "id", id));
 
         advert.setStatus(Advert.Status.ARCHIVED);
-        userRepository.save(user);
+        advertRepository.save(advert);
         return ResponseEntity.ok(new ApiResponse(true, "Advert removed."));
     }
 
