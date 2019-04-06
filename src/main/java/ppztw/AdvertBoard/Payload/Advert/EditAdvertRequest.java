@@ -6,6 +6,7 @@ import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -25,5 +26,8 @@ public class EditAdvertRequest {
 
     @Nullable
     private ImagePayload image;
+
+    @Nullable
+    private Map<Long, String> additionalInfo;
 
 }
