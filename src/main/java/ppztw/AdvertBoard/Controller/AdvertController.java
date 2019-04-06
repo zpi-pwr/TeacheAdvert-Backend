@@ -21,6 +21,7 @@ import ppztw.AdvertBoard.View.Advert.AdvertDetailsView;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/advert")
@@ -43,6 +44,9 @@ public class AdvertController {
 
     @Autowired
     private ImageRepository imageRepository;
+
+    @Autowired
+    private CategoryInfoRepository categoryInfoRepository;
 
     @PostMapping(value = "/add")
     @PreAuthorize("hasRole('USER')")
@@ -82,13 +86,24 @@ public class AdvertController {
             }
         }
 
+        Map<Long, String> additionalInfo = createAdvertRequest.getAdditionalInfo();
+        List<AdvertInfo> advertInfos = new ArrayList<>();
+        if (additionalInfo != null) {
+            for (Map.Entry<Long, String> entry : additionalInfo.entrySet()) {
+                CategoryInfo info = categoryInfoRepository.findById(entry.getKey())
+                        .orElseThrow(() -> new ResourceNotFoundException(
+                                "CategoryInfo", "id", entry.getKey()));
+                advertInfos.add(new AdvertInfo(info, entry.getValue()));
+            }
+        }
+
 
         Advert advert = new Advert(
                 createAdvertRequest.getTitle(),
                 tags,
                 createAdvertRequest.getDescription(),
                 img, subcategory,
-                user);
+                user, advertInfos);
         advertList.add(advert);
         user.setAdverts(advertList);
         subcategory.addAdvert(advert);
