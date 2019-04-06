@@ -24,6 +24,7 @@ public class AdvertDetailsView extends AdvertSummaryView {
     String categoryName;
     List<String> tags;
     Map<String, Object> additionalInfo;
+    Advert.Status status;
 
 
     public AdvertDetailsView(Advert advert) {
@@ -35,6 +36,7 @@ public class AdvertDetailsView extends AdvertSummaryView {
         this.categoryName = advert.getSubcategory().getCategoryName();
         this.tags = new ArrayList<>();
         this.additionalInfo = new HashMap<>();
+        this.status = advert.getStatus();
         for (Tag tag : advert.getTags())
             this.tags.add(tag.getName());
         for (AdvertInfo info : advert.getAdditionalInfo()) {
