@@ -1,4 +1,4 @@
-package ppztw.AdvertBoard.Model;
+package ppztw.AdvertBoard.Model.Advert;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

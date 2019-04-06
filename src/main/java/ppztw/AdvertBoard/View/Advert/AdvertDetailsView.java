@@ -2,9 +2,9 @@ package ppztw.AdvertBoard.View.Advert;
 
 import lombok.Getter;
 import lombok.Setter;
-import ppztw.AdvertBoard.Model.Advert;
-import ppztw.AdvertBoard.Model.AdvertInfo;
-import ppztw.AdvertBoard.Model.Tag;
+import ppztw.AdvertBoard.Model.Advert.Advert;
+import ppztw.AdvertBoard.Model.Advert.AdvertInfo;
+import ppztw.AdvertBoard.Model.Advert.Tag;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

@@ -2,7 +2,7 @@ package ppztw.AdvertBoard.View.Advert;
 
 import lombok.Getter;
 import lombok.Setter;
-import ppztw.AdvertBoard.Model.Advert;
+import ppztw.AdvertBoard.Model.Advert.Advert;
 
 import java.time.LocalDate;
 

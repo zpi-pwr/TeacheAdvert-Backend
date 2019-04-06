@@ -2,7 +2,7 @@ package ppztw.AdvertBoard.View.User;
 
 import lombok.Getter;
 import lombok.Setter;
-import ppztw.AdvertBoard.Model.Advert;
+import ppztw.AdvertBoard.Model.Advert.Advert;
 import ppztw.AdvertBoard.Model.AuthProvider;
 import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;

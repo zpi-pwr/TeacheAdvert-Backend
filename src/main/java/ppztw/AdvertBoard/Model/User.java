@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
+import ppztw.AdvertBoard.Model.Advert.Advert;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
