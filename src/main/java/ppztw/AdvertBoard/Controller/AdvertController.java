@@ -58,7 +58,7 @@ public class AdvertController {
     @PreAuthorize("hasRole('USER')")
     @Transactional
     public ResponseEntity<?> editAdvert(@CurrentUser UserPrincipal userPrincipal,
-                                        @Valid @RequestPart EditAdvertRequest editAdvertRequest) {
+                                        @Valid @RequestBody EditAdvertRequest editAdvertRequest) {
 
         advertUserService.editAdvert(userPrincipal, editAdvertRequest);
         return ResponseEntity.ok(new ApiResponse(true, "Advert edited successfully"));
