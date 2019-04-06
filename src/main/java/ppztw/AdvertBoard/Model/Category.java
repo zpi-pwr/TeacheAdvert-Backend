@@ -37,6 +37,9 @@ public class Category {
     @OneToMany
     private List<Advert> adverts;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<CategoryInfo> infoList;
+
     public void addAdvert(Advert advert) {
         adverts.add(advert);
     }

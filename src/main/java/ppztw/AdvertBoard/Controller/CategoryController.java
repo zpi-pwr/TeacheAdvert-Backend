@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Advert;
 import ppztw.AdvertBoard.Model.Category;
+import ppztw.AdvertBoard.Model.CategoryInfo;
+import ppztw.AdvertBoard.Model.InfoType;
 import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Payload.CreateCategoryRequest;
 import ppztw.AdvertBoard.Repository.AdvertRepository;
@@ -25,6 +27,7 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -54,6 +57,15 @@ public class CategoryController {
 
             category.setParentCategory(parent);
         }
+
+        List<CategoryInfo> categoryInfos = new ArrayList<>();
+
+        if (createCategoryRequest.getInfos() != null) {
+            for (Map.Entry<String, InfoType> entry : createCategoryRequest.getInfos().entrySet())
+                categoryInfos.add(new CategoryInfo(entry.getKey(), entry.getValue()));
+
+        }
+        category.setInfoList(categoryInfos);
 
         logger.info(String.format("Admin %s has created category with name %s", userPrincipal.getName(), createCategoryRequest.getCategoryName()));
 
