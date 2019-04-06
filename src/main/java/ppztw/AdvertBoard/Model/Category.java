@@ -52,4 +52,12 @@ public class Category {
         return advertList;
     }
 
+    public List<CategoryInfo> getInfoList() {
+        List<CategoryInfo> infos = new ArrayList<>();
+        if (infoList != null)
+            infos.addAll(infoList);
+        if (parentCategory != null)
+            infos.addAll(parentCategory.getInfoList());
+        return infos;
+    }
 }
