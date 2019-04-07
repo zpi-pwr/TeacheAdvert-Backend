@@ -41,7 +41,7 @@ public class AdvertUserService {
     @Autowired
     private AdvertRepository advertRepository;
 
-    private Optional<Advert> findAdvert(Long userId, Long id) {
+    public Optional<Advert> findAdvert(Long userId, Long id) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException("User", "id", userId));
         List<Advert> adverts = user.getAdverts();
