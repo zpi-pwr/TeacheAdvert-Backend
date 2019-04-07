@@ -4,14 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
 public class EditAdvertRequest {
 
-    @NotBlank
+    @NotNull
     private Long id;
 
     @Nullable
@@ -25,5 +26,8 @@ public class EditAdvertRequest {
 
     @Nullable
     private ImagePayload image;
+
+    @Nullable
+    private Map<Long, String> additionalInfo;
 
 }

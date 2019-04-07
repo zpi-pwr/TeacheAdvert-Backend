@@ -4,7 +4,9 @@ package ppztw.AdvertBoard.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ppztw.AdvertBoard.Model.Advert.Advert;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -14,6 +16,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email")
 })
@@ -46,5 +49,8 @@ public class User {
     private List<Advert> adverts;
 
     private String providerId;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Profile profile;
 
 }

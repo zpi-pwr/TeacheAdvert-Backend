@@ -17,16 +17,17 @@ public class PageUtils<T> {
 
     public Page<T> getPage(List<T> content, Pageable pageable) {
         Sort sort = pageable.getSort();
-        ComparatorChain comparatorChain = new ComparatorChain();
-        for (Sort.Order order : sort) {
-            String property = order.getProperty();
-            SortDefinition sortDefinition = new MutableSortDefinition(property,
-                    true, order.isAscending());
-            PropertyComparator.sort(content, sortDefinition);
-            comparatorChain.addComparator(new PropertyComparator<>(sortDefinition));
+        if (!sort.isEmpty()) {
+            ComparatorChain comparatorChain = new ComparatorChain();
+            for (Sort.Order order : sort) {
+                String property = order.getProperty();
+                SortDefinition sortDefinition = new MutableSortDefinition(property,
+                        true, order.isAscending());
+                PropertyComparator.sort(content, sortDefinition);
+                comparatorChain.addComparator(new PropertyComparator<>(sortDefinition));
+            }
+            content.sort(comparatorChain);
         }
-        content.sort(comparatorChain);
-
         PagedListHolder<T> pagedListHolder = new PagedListHolder<T>(Collections.unmodifiableList(content));
         pagedListHolder.setPageSize(pageable.getPageSize());
         pagedListHolder.setPage(pageable.getPageNumber());
