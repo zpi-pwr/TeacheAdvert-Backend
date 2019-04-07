@@ -41,8 +41,9 @@ public class AdvertUserService {
     @Autowired
     private AdvertRepository advertRepository;
 
-    public Optional<Advert> findAdvert(User user, Long id) {
-
+    public Optional<Advert> findAdvert(Long userId, Long id) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException("User", "id", userId));
         List<Advert> adverts = user.getAdverts();
         Advert advert = null;
         for (Advert adv : adverts)
@@ -74,9 +75,7 @@ public class AdvertUserService {
     }
 
     public void editAdvert(UserPrincipal userPrincipal, EditAdvertRequest request) {
-        User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() ->
-                new ResourceNotFoundException("User", "id", userPrincipal.getId()));
-        Advert advert = findAdvert(user, request.getId()).orElseThrow(() ->
+        Advert advert = findAdvert(userPrincipal.getId(), request.getId()).orElseThrow(() ->
                 new ResourceNotFoundException("Advert", "id", request.getId()));
 
         advert.setTitle(request.getTitle() == null ? advert.getTitle() : request.getTitle());

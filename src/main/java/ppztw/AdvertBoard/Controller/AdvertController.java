@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ppztw.AdvertBoard.Advert.AdvertUserService;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Advert.Advert;
-import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.Payload.Advert.CreateAdvertRequest;
 import ppztw.AdvertBoard.Payload.Advert.EditAdvertRequest;
 import ppztw.AdvertBoard.Payload.ApiResponse;
@@ -69,9 +68,7 @@ public class AdvertController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> removeAdvert(@CurrentUser UserPrincipal userPrincipal,
                                           @RequestParam Long id) {
-        User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() ->
-                new ResourceNotFoundException("User", "id", userPrincipal.getId()));
-        Advert advert = advertUserService.findAdvert(user, id).orElseThrow(() ->
+        Advert advert = advertUserService.findAdvert(userPrincipal.getId(), id).orElseThrow(() ->
                 new ResourceNotFoundException("Advert", "id", id));
 
         advert.setStatus(Advert.Status.ARCHIVED);
