@@ -1,10 +1,10 @@
-package ppztw.AdvertBoard.View;
+package ppztw.AdvertBoard.View.Advert;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ppztw.AdvertBoard.Model.CategoryInfo;
-import ppztw.AdvertBoard.Model.InfoType;
+import ppztw.AdvertBoard.Model.Advert.CategoryInfo;
+import ppztw.AdvertBoard.Model.Advert.InfoType;
 
 @Getter
 @Setter

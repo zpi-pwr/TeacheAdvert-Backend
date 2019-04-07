@@ -6,11 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ppztw.AdvertBoard.Exception.BadRequestException;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
-import ppztw.AdvertBoard.Model.*;
+import ppztw.AdvertBoard.Model.Advert.*;
+import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.Payload.Advert.CreateAdvertRequest;
 import ppztw.AdvertBoard.Payload.Advert.EditAdvertRequest;
 import ppztw.AdvertBoard.Payload.Advert.ImagePayload;
-import ppztw.AdvertBoard.Repository.*;
+import ppztw.AdvertBoard.Repository.Advert.AdvertRepository;
+import ppztw.AdvertBoard.Repository.Advert.CategoryInfoRepository;
+import ppztw.AdvertBoard.Repository.Advert.CategoryRepository;
+import ppztw.AdvertBoard.Repository.Advert.TagRepository;
+import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 
 import java.util.ArrayList;

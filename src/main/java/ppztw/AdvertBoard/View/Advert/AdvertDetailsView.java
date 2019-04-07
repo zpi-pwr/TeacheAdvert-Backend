@@ -2,9 +2,9 @@ package ppztw.AdvertBoard.View.Advert;
 
 import lombok.Getter;
 import lombok.Setter;
-import ppztw.AdvertBoard.Model.Advert;
-import ppztw.AdvertBoard.Model.AdvertInfo;
-import ppztw.AdvertBoard.Model.Tag;
+import ppztw.AdvertBoard.Model.Advert.Advert;
+import ppztw.AdvertBoard.Model.Advert.AdvertInfo;
+import ppztw.AdvertBoard.Model.Advert.Tag;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -17,24 +17,28 @@ import java.util.Map;
 @Setter
 public class AdvertDetailsView extends AdvertSummaryView {
 
-    Long userId;
-    String userName;
+    Long profileId;
+    String profileName;
     String description;
     Long categoryId;
     String categoryName;
     List<String> tags;
     Map<String, Object> additionalInfo;
+    Advert.Status status;
 
 
     public AdvertDetailsView(Advert advert) {
         super(advert);
-        this.userId = advert.getUser().getId();
-        this.userName = advert.getUser().getName();
+        this.profileId = advert.getUser().getProfile() != null ?
+                advert.getUser().getProfile().getId() : null;
+        this.profileName = advert.getUser().getProfile() != null ?
+                advert.getUser().getProfile().getVisibleName() : null;
         this.description = advert.getDescription();
         this.categoryId = advert.getSubcategory().getId();
         this.categoryName = advert.getSubcategory().getCategoryName();
         this.tags = new ArrayList<>();
         this.additionalInfo = new HashMap<>();
+        this.status = advert.getStatus();
         for (Tag tag : advert.getTags())
             this.tags.add(tag.getName());
         for (AdvertInfo info : advert.getAdditionalInfo()) {

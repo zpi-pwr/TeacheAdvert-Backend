@@ -1,10 +1,10 @@
-package ppztw.AdvertBoard.Payload;
+package ppztw.AdvertBoard.Payload.Advert;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
-import ppztw.AdvertBoard.Model.InfoType;
+import ppztw.AdvertBoard.Model.Advert.InfoType;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Map;

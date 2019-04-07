@@ -7,12 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ppztw.AdvertBoard.Advert.AdvertUserService;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
-import ppztw.AdvertBoard.Model.Advert;
+import ppztw.AdvertBoard.Model.Advert.Advert;
 import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.Payload.Advert.CreateAdvertRequest;
 import ppztw.AdvertBoard.Payload.Advert.EditAdvertRequest;
 import ppztw.AdvertBoard.Payload.ApiResponse;
-import ppztw.AdvertBoard.Repository.*;
+import ppztw.AdvertBoard.Repository.Advert.*;
+import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 import ppztw.AdvertBoard.View.Advert.AdvertDetailsView;
@@ -74,7 +75,7 @@ public class AdvertController {
                 new ResourceNotFoundException("Advert", "id", id));
 
         advert.setStatus(Advert.Status.ARCHIVED);
-        userRepository.save(user);
+        advertRepository.save(advert);
         return ResponseEntity.ok(new ApiResponse(true, "Advert removed."));
     }
 
