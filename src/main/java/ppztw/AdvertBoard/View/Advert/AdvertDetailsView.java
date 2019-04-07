@@ -17,8 +17,8 @@ import java.util.Map;
 @Setter
 public class AdvertDetailsView extends AdvertSummaryView {
 
-    Long userId;
-    String userName;
+    Long profileId;
+    String profileName;
     String description;
     Long categoryId;
     String categoryName;
@@ -29,8 +29,10 @@ public class AdvertDetailsView extends AdvertSummaryView {
 
     public AdvertDetailsView(Advert advert) {
         super(advert);
-        this.userId = advert.getUser().getId();
-        this.userName = advert.getUser().getName();
+        this.profileId = advert.getUser().getProfile() != null ?
+                advert.getUser().getProfile().getId() : null;
+        this.profileName = advert.getUser().getProfile() != null ?
+                advert.getUser().getProfile().getVisibleName() : null;
         this.description = advert.getDescription();
         this.categoryId = advert.getSubcategory().getId();
         this.categoryName = advert.getSubcategory().getCategoryName();
