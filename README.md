@@ -34,6 +34,29 @@ header: Authorization: Bearer <TOKEN>
 method: GET
 ```
 
+### Edit Profile
+```
+path: /user/me
+header: Authorization: Bearer <TOKEN>
+header: Content-Type: application/json
+method: POST
+request body: {"visibleName":<NAME>, "firstName":<NAME>, "lastName":<NAME>, "telephoneNumber":<NUMBER>, "contactMail":<MAIL>}
+```
+
+### All users
+```
+path: /user/all
+method: GET
+request param: nameContains, page, limit, sort
+```
+
+### Get user
+```
+path: /user/get
+method: GET
+request param: profileId
+```
+
 ## Advert
 
 ### Add advert
@@ -41,7 +64,7 @@ method: GET
 path: /advert/add
 header: Authorization: Bearer <TOKEN>; Content-Type: application/json
 method: POST
-request body: {"title":<TITLE>, "tags":<TAGS>, "description":<DESC>, "image": {"base64":<B64>, "name":<NAME>, "size":<SIZE>, "type":<TYPE> }, category:<CAT_ID>}
+request body: {"title":<TITLE>, "tags":<TAGS>, "description":<DESC>, "image": {"base64":<B64>, "name":<NAME>}, category:<CAT_ID>, "additionalInfo":{<INFO_ID>:<VALUE>, ...}}
 ```
 
 ### Edit advert
@@ -49,7 +72,7 @@ request body: {"title":<TITLE>, "tags":<TAGS>, "description":<DESC>, "image": {"
 path: /advert/edit
 header: Authorization: Bearer <TOKEN>; Content-Type: application/json
 method: POST
-request body: {"id":<ID>, "title":<TITLE>, "tags":<TAGS>, "description":<DESC>, "image": {"base64":<B64>, "name":<NAME>, "size":<SIZE>, "type":<TYPE> }}
+request body: {"id":<ID>, "title":<TITLE>, "tags":<TAGS>, "description":<DESC>, "image": {"base64":<B64>, "name":<NAME>}, "additionalInfo":{<INFO_ID>:<VALUE>, ...}}
 ```
 
 ### Remove advert
@@ -81,7 +104,7 @@ request param: id
 path: /category/add
 header: Authorization: Bearer <TOKEN>; Content-Type: application/json
 method: POST
-request body: {"categoryName":<NAME>, "description":<DESC>, "parentCategory":<PARENT_ID>}
+request body: {"categoryName":<NAME>, "description":<DESC>, "parentCategory":<PARENT_ID>, "infos": {<NAME>:<INFO_TYPE>, ...}}
 ```
 
 ### Remove category

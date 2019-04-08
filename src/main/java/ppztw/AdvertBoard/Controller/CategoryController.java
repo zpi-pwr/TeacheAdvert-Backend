@@ -9,22 +9,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
-import ppztw.AdvertBoard.Model.Advert;
-import ppztw.AdvertBoard.Model.Category;
+import ppztw.AdvertBoard.Model.Advert.Advert;
+import ppztw.AdvertBoard.Model.Advert.Category;
+import ppztw.AdvertBoard.Model.Advert.CategoryInfo;
+import ppztw.AdvertBoard.Model.Advert.InfoType;
+import ppztw.AdvertBoard.Payload.Advert.CreateCategoryRequest;
 import ppztw.AdvertBoard.Payload.ApiResponse;
-import ppztw.AdvertBoard.Payload.CreateCategoryRequest;
-import ppztw.AdvertBoard.Repository.AdvertRepository;
-import ppztw.AdvertBoard.Repository.CategoryRepository;
+import ppztw.AdvertBoard.Repository.Advert.AdvertRepository;
+import ppztw.AdvertBoard.Repository.Advert.CategoryRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 import ppztw.AdvertBoard.Util.PageUtils;
 import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
-import ppztw.AdvertBoard.View.CategoryView;
+import ppztw.AdvertBoard.View.Advert.CategoryView;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -54,6 +57,15 @@ public class CategoryController {
 
             category.setParentCategory(parent);
         }
+
+        List<CategoryInfo> categoryInfos = new ArrayList<>();
+
+        if (createCategoryRequest.getInfos() != null) {
+            for (Map.Entry<String, InfoType> entry : createCategoryRequest.getInfos().entrySet())
+                categoryInfos.add(new CategoryInfo(entry.getKey(), entry.getValue()));
+
+        }
+        category.setInfoList(categoryInfos);
 
         logger.info(String.format("Admin %s has created category with name %s", userPrincipal.getName(), createCategoryRequest.getCategoryName()));
 
@@ -105,8 +117,10 @@ public class CategoryController {
         PageUtils<AdvertSummaryView> pageUtils = new PageUtils<>();
         List<Advert> adverts = category.getAdverts();
         List<AdvertSummaryView> advertViews = new ArrayList<>();
-        for (Advert advert : adverts)
-            advertViews.add(new AdvertSummaryView(advert));
+        for (Advert advert : adverts) {
+            if (advert.getStatus() != Advert.Status.ARCHIVED && advert.getStatus() != Advert.Status.BANNED)
+                advertViews.add(new AdvertSummaryView(advert));
+        }
 
         if (maxDate != null)
             advertViews = advertViews.stream()

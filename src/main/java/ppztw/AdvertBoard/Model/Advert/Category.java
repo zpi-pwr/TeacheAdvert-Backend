@@ -1,4 +1,4 @@
-package ppztw.AdvertBoard.Model;
+package ppztw.AdvertBoard.Model.Advert;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -37,6 +37,9 @@ public class Category {
     @OneToMany
     private List<Advert> adverts;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<CategoryInfo> infoList;
+
     public void addAdvert(Advert advert) {
         adverts.add(advert);
     }
@@ -49,4 +52,12 @@ public class Category {
         return advertList;
     }
 
+    public List<CategoryInfo> getInfoList() {
+        List<CategoryInfo> infos = new ArrayList<>();
+        if (infoList != null)
+            infos.addAll(infoList);
+        if (parentCategory != null)
+            infos.addAll(parentCategory.getInfoList());
+        return infos;
+    }
 }
