@@ -16,7 +16,6 @@ import ppztw.AdvertBoard.Repository.Advert.CategoryInfoRepository;
 import ppztw.AdvertBoard.Repository.Advert.CategoryRepository;
 import ppztw.AdvertBoard.Repository.Advert.TagRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
-import ppztw.AdvertBoard.Security.UserPrincipal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,9 +54,9 @@ public class AdvertUserService {
         return Optional.ofNullable(advert);
     }
 
-    public void addAdvert(UserPrincipal userPrincipal, CreateAdvertRequest request) {
-        User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() ->
-                new ResourceNotFoundException("User", "id", userPrincipal.getId()));
+    public void addAdvert(Long userId, CreateAdvertRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException("User", "id", userId));
         Category category = categoryRepository.findById(request.getCategory())
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id",
                         request.getCategory()));
@@ -74,8 +73,8 @@ public class AdvertUserService {
 
     }
 
-    public void editAdvert(UserPrincipal userPrincipal, EditAdvertRequest request) {
-        Advert advert = findAdvert(userPrincipal.getId(), request.getId()).orElseThrow(() ->
+    public void editAdvert(Long userId, EditAdvertRequest request) {
+        Advert advert = findAdvert(userId, request.getId()).orElseThrow(() ->
                 new ResourceNotFoundException("Advert", "id", request.getId()));
 
         advert.setTitle(request.getTitle() == null ? advert.getTitle() : request.getTitle());

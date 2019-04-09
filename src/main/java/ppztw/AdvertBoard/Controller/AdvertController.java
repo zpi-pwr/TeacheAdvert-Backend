@@ -50,7 +50,7 @@ public class AdvertController {
     public ResponseEntity<?> addAdvert(@CurrentUser UserPrincipal userPrincipal,
                                        @Valid @RequestBody CreateAdvertRequest createAdvertRequest) {
 
-        advertUserService.addAdvert(userPrincipal, createAdvertRequest);
+        advertUserService.addAdvert(userPrincipal.getId(), createAdvertRequest);
         return ResponseEntity.ok(new ApiResponse(true, "Added new advert"));
     }
 
@@ -60,7 +60,7 @@ public class AdvertController {
     public ResponseEntity<?> editAdvert(@CurrentUser UserPrincipal userPrincipal,
                                         @Valid @RequestBody EditAdvertRequest editAdvertRequest) {
 
-        advertUserService.editAdvert(userPrincipal, editAdvertRequest);
+        advertUserService.editAdvert(userPrincipal.getId(), editAdvertRequest);
         return ResponseEntity.ok(new ApiResponse(true, "Advert edited successfully"));
     }
 

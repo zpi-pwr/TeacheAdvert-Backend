@@ -10,19 +10,19 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 import ppztw.AdvertBoard.Advert.AdvertUserService;
+import ppztw.AdvertBoard.Exception.BadRequestException;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Advert.Advert;
 import ppztw.AdvertBoard.Model.Advert.Category;
 import ppztw.AdvertBoard.Model.User;
+import ppztw.AdvertBoard.Payload.Advert.CreateAdvertRequest;
 import ppztw.AdvertBoard.Repository.Advert.AdvertRepository;
 import ppztw.AdvertBoard.Repository.Advert.CategoryInfoRepository;
 import ppztw.AdvertBoard.Repository.Advert.CategoryRepository;
 import ppztw.AdvertBoard.Repository.Advert.TagRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -68,7 +68,7 @@ public class AdvertUserServiceIntegrationTests {
     }
 
     @Test
-    public void whenValidUserAndAdvertId_thenAdvertShouldBeFound() {
+    public void findAdvert_ExistingUserAndAdvertIdGiven_ShouldReturnAdvert() {
         Long userId = 0L;
         Long advertId = 0L;
 
@@ -80,17 +80,48 @@ public class AdvertUserServiceIntegrationTests {
     }
 
     @Test
-    public void whenValidUserInvalidAdvertId_thenNullValueShouldBeFound() {
+    public void findAdvert_NotExistingAdvertIdGiven_ShouldReturnNull() {
         Long userId = 0L;
         Long advertId = 1L;
         assertThat(advertUserService.findAdvert(userId, advertId)).isEmpty();
     }
 
     @Test(expected = ResourceNotFoundException.class)
-    public void whenInvalidUserId_thenResourceNotFoundExceptionShouldBeThrown() {
+    public void findAdvert_NotExistingUserIdGiven_ShouldThrowException() {
         Long userId = 1L;
         Long advertId = 0L;
         advertUserService.findAdvert(userId, advertId);
+    }
+
+    @Test
+    public void addAdvert_ExistingUserAndValidRequestGiven_ShouldAddAdvert() {
+        Long userId = 0L;
+        CreateAdvertRequest request = new CreateAdvertRequest();
+        request.setTitle("Title");
+        request.setDescription("description");
+        request.setCategory(0L);
+        request.setAdditionalInfo(null);
+        request.setTags(null);
+        request.setImage(null);
+        advertUserService.addAdvert(userId, request);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void addAdvert_ExistingUserIdAndInvalidAdditionalInfo_ShouldThrowException() {
+        Long userId = 0L;
+
+        Long additionalInfoId = 1L;
+        Map<Long, String> additionalInfos = new HashMap<>();
+        additionalInfos.put(additionalInfoId, "");
+
+        CreateAdvertRequest request = new CreateAdvertRequest();
+        request.setTitle("Title");
+        request.setDescription("description");
+        request.setCategory(0L);
+        request.setAdditionalInfo(additionalInfos);
+        request.setTags(null);
+        request.setImage(null);
+        advertUserService.addAdvert(userId, request);
     }
 
     @TestConfiguration
