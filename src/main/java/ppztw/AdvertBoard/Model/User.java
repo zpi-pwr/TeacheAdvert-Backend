@@ -50,7 +50,7 @@ public class User {
 
     private String providerId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private Profile profile;
 
 }

@@ -25,7 +25,7 @@ public class UserService {
         User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() ->
                 new ResourceNotFoundException("User", "id", userPrincipal.getId()));
 
-        Profile profile = user.getProfile() == null ? new Profile() : user.getProfile();
+        Profile profile = !profileRepository.findByUserId(userPrincipal.getId()).isPresent() ? new Profile() : user.getProfile();
         profile.setUser(user);
         profile.setContactMail(profileInfo.getContactMail());
         profile.setFirstName(profileInfo.getFirstName());
