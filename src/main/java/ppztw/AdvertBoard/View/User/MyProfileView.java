@@ -18,7 +18,7 @@ public class MyProfileView extends ProfileSummaryView {
     String contactMail;
 
     public MyProfileView(Profile profile) {
-        super();
+        super(profile);
         this.firstName = profile.getFirstName();
         this.lastName = profile.getLastName();
         this.telephoneNumber = profile.getTelephoneNumber();
