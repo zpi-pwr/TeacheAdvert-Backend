@@ -15,10 +15,10 @@ import ppztw.AdvertBoard.Security.UserPrincipal;
 public class UserService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    ProfileRepository profileRepository;
+    private ProfileRepository profileRepository;
 
     @Transactional
     public void processProfile(UserPrincipal userPrincipal, ProfileInfo profileInfo) {
