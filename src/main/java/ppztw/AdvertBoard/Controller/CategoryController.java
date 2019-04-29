@@ -13,12 +13,15 @@ import ppztw.AdvertBoard.Model.Advert.Advert;
 import ppztw.AdvertBoard.Model.Advert.Category;
 import ppztw.AdvertBoard.Model.Advert.CategoryInfo;
 import ppztw.AdvertBoard.Model.Advert.InfoType;
+import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.Payload.Advert.CreateCategoryRequest;
 import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Repository.Advert.AdvertRepository;
 import ppztw.AdvertBoard.Repository.Advert.CategoryRepository;
+import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
+import ppztw.AdvertBoard.User.UserService;
 import ppztw.AdvertBoard.Util.PageUtils;
 import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 import ppztw.AdvertBoard.View.Advert.CategoryView;
@@ -28,6 +31,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,6 +45,12 @@ public class CategoryController {
 
     @Autowired
     private AdvertRepository advertRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('USER')")
@@ -108,12 +118,15 @@ public class CategoryController {
     @GetMapping("/get")
     @PreAuthorize("permitAll()")
     public Page<AdvertSummaryView> getCategoryAdverts(
+            @CurrentUser UserPrincipal userPrincipal,
             @RequestParam Long categoryId, Pageable pageable,
             @RequestParam(required = false) LocalDate maxDate,
             @RequestParam(required = false) LocalDate minDate,
             @RequestParam(required = false) String titleContains) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
+        Optional<User> user = userRepository.findById(userPrincipal.getId());
+        user.ifPresent(value -> userService.addCategoryEntry(categoryId, value, 0.01));
         PageUtils<AdvertSummaryView> pageUtils = new PageUtils<>();
         List<Advert> adverts = category.getAdverts();
         List<AdvertSummaryView> advertViews = new ArrayList<>();
