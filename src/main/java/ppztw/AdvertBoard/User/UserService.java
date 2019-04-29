@@ -11,6 +11,9 @@ import ppztw.AdvertBoard.Repository.ProfileRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class UserService {
 
@@ -34,8 +37,38 @@ public class UserService {
         profile.setVisibleName(profileInfo.getVisibleName());
         user.setProfile(profile);
 
+        Map<Long, Double> categoryEntries = profileInfo.getCategoryEntries();
+        if (categoryEntries != null) {
+            Map<Long, Double> userCategoryEntries = user.getCategoryEntries();
+            if (userCategoryEntries != null) {
+                for (Map.Entry<Long, Double> entry : categoryEntries.entrySet()) {
+                    Long catId = entry.getKey();
+                    Double val = entry.getValue();
+                    if (userCategoryEntries.containsKey(catId)) {
+                        Double oldVal = userCategoryEntries.get(catId);
+                        userCategoryEntries.put(catId, oldVal + val);
+                    }
+                }
+                user.setCategoryEntries(userCategoryEntries);
+            } else
+                user.setCategoryEntries(categoryEntries);
+        }
         userRepository.save(user);
         profileRepository.save(profile);
     }
 
+    public void addCategoryEntry(Long categoryId, User user, Double val) {
+        Map<Long, Double> categoryEntries = user.getCategoryEntries();
+        if (categoryEntries == null) {
+            categoryEntries = new HashMap<Long, Double>();
+            categoryEntries.put(categoryId, val);
+        } else {
+            if (categoryEntries.containsKey(categoryId))
+                val = val + categoryEntries.get(categoryId);
+            categoryEntries.put(categoryId, val);
+
+        }
+        user.setCategoryEntries(categoryEntries);
+        userRepository.save(user);
+    }
 }
