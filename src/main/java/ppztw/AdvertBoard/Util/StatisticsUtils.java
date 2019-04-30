@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.toMap;
 
 public class StatisticsUtils {
 
-    private Map<Long, Double> normalizeIntoDistribution(Map<Long, Double> map) {
+    public static Map<Long, Double> normalizeIntoDistribution(Map<Long, Double> map) {
 
         Map<Long, Double> expMap = new HashMap<>();
         double expSum = 0;
