@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ppztw.AdvertBoard.Advert.AdvertUserService;
+import ppztw.AdvertBoard.Advert.Category.CategoryService;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Advert.Advert;
 import ppztw.AdvertBoard.Model.Advert.Category;
@@ -23,7 +24,6 @@ import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 import ppztw.AdvertBoard.User.UserService;
-import ppztw.AdvertBoard.Util.PageUtils;
 import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 import ppztw.AdvertBoard.View.Advert.CategoryView;
 
@@ -55,6 +55,9 @@ public class CategoryController {
 
     @Autowired
     private AdvertUserService advertUserService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('USER')")
@@ -127,50 +130,35 @@ public class CategoryController {
             @RequestParam(required = false) LocalDate maxDate,
             @RequestParam(required = false) LocalDate minDate,
             @RequestParam(required = false) String titleContains) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
+
         Optional<User> user = Optional.empty();
         if (userPrincipal != null)
             user = userRepository.findById(userPrincipal.getId());
-        List<AdvertSummaryView> advertViews = new ArrayList<>();
-        List<Advert> adverts = category.getAdverts().stream()
-                .filter(advert -> advert.getStatus() != Advert.Status.ARCHIVED
-                        && advert.getStatus() != Advert.Status.BANNED)
-                .collect(Collectors.toList());
-        int recommendedSize = 0;
-        if (user.isPresent()) {
-            if (categoryId == 0) {
-                List<Advert> recommendedAdverts = advertUserService.getRecommendedAdvertList(user.get(),
-                        adverts, pageable.getPageSize());
-                recommendedSize = recommendedAdverts.size() - adverts.size();
-                adverts = recommendedAdverts;
-            } else
-                userService.addCategoryEntry(categoryId, user.get(), 0.01);
-        }
-        for (int i = 0; i < adverts.size(); i++) {
-            AdvertSummaryView advertView = new AdvertSummaryView(adverts.get(i));
-            if (i < recommendedSize)
-                advertView.setRecommended(true);
-            advertViews.add(advertView);
-        }
-
-        PageUtils<AdvertSummaryView> pageUtils = new PageUtils<>();
-
-
-
+        List<Advert> adverts = categoryService.getCategoryAdverts(categoryId);
         if (maxDate != null)
-            advertViews = advertViews.stream()
+            adverts = adverts.stream()
                     .filter(advert -> advert.getDate().isBefore(maxDate))
                     .collect(Collectors.toList());
         if (minDate != null)
-            advertViews = advertViews.stream()
+            adverts = adverts.stream()
                     .filter(advert -> advert.getDate().isAfter(minDate))
                     .collect(Collectors.toList());
         if (titleContains != null)
-            advertViews = advertViews.stream()
+            adverts = adverts.stream()
                     .filter(advert -> advert.getTitle().contains(titleContains))
                     .collect(Collectors.toList());
 
-        return pageUtils.getPage(advertViews, pageable);
+        int recommendedSize = 0;
+        if (user.isPresent()) {
+            if (categoryId == 0) {
+                int oldSize = adverts.size();
+                adverts = advertUserService.getRecommendedAdvertList(user.get(),
+                        adverts, pageable.getPageSize());
+                recommendedSize = adverts.size() - oldSize;
+            } else
+                userService.addCategoryEntry(categoryId, user.get(), 0.01);
+        }
+
+        return advertUserService.getPage(adverts, recommendedSize, pageable);
     }
 }

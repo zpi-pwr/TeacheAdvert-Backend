@@ -3,6 +3,8 @@ package ppztw.AdvertBoard.Advert;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ppztw.AdvertBoard.Exception.BadRequestException;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
@@ -19,6 +21,8 @@ import ppztw.AdvertBoard.Repository.Advert.TagRepository;
 import ppztw.AdvertBoard.Repository.ProfileRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Util.CategoryEntryUtils;
+import ppztw.AdvertBoard.Util.PageUtils;
+import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -193,5 +197,21 @@ public class AdvertUserService {
                 Base64.decodeBase64(imagePayload.getBase64())) : null;
     }
 
+
+    public Page<AdvertSummaryView> getPage(List<Advert> adverts, int recommendedSize, Pageable pageable) {
+
+        PageUtils<AdvertSummaryView> pageUtils = new PageUtils<>();
+
+        List<AdvertSummaryView> advertViews = new ArrayList<>();
+
+        for (int i = 0; i < adverts.size(); i++) {
+            AdvertSummaryView advertView = new AdvertSummaryView(adverts.get(i));
+            if (i < recommendedSize)
+                advertView.setRecommended(true);
+            advertViews.add(advertView);
+        }
+
+        return pageUtils.getPage(advertViews, pageable);
+    }
 
 }
