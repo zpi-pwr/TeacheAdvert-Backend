@@ -54,7 +54,7 @@ public class User {
     @OneToOne
     private Profile profile;
 
-    @Lob
+    @ElementCollection
     private Map<Long, Double> categoryEntries;
 
 }
