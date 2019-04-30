@@ -139,11 +139,13 @@ public class CategoryController {
                 .collect(Collectors.toList());
         int recommendedSize = 0;
         if (user.isPresent()) {
-            List<Advert> recommendedAdverts = advertUserService.getRecommendedAdvertList(user.get(),
-                    adverts, pageable.getPageSize());
-            recommendedSize = recommendedAdverts.size() - adverts.size();
-            adverts = recommendedAdverts;
-            userService.addCategoryEntry(categoryId, user.get(), 0.01);
+            if (categoryId == 0) {
+                List<Advert> recommendedAdverts = advertUserService.getRecommendedAdvertList(user.get(),
+                        adverts, pageable.getPageSize());
+                recommendedSize = recommendedAdverts.size() - adverts.size();
+                adverts = recommendedAdverts;
+            } else
+                userService.addCategoryEntry(categoryId, user.get(), 0.01);
         }
         for (int i = 0; i < adverts.size(); i++) {
             AdvertSummaryView advertView = new AdvertSummaryView(adverts.get(i));
