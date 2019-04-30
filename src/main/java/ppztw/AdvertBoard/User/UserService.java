@@ -10,8 +10,8 @@ import ppztw.AdvertBoard.Payload.ProfileInfo;
 import ppztw.AdvertBoard.Repository.ProfileRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.UserPrincipal;
+import ppztw.AdvertBoard.Util.CategoryEntryUtils;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -59,15 +59,7 @@ public class UserService {
 
     public void addCategoryEntry(Long categoryId, User user, Double val) {
         Map<Long, Double> categoryEntries = user.getCategoryEntries();
-        if (categoryEntries == null) {
-            categoryEntries = new HashMap<Long, Double>();
-            categoryEntries.put(categoryId, val);
-        } else {
-            if (categoryEntries.containsKey(categoryId))
-                val = val + categoryEntries.get(categoryId);
-            categoryEntries.put(categoryId, val);
-
-        }
+        categoryEntries = CategoryEntryUtils.addEntryValue(categoryId, user, val);
         user.setCategoryEntries(categoryEntries);
         userRepository.save(user);
     }
