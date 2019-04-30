@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -52,5 +53,8 @@ public class User {
 
     @OneToOne
     private Profile profile;
+
+    @ElementCollection
+    private Map<Long, Double> categoryEntries;
 
 }

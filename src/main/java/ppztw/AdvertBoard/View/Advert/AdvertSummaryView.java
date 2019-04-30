@@ -13,11 +13,13 @@ public class AdvertSummaryView {
     String title;
     String pic;
     LocalDate date;
+    Boolean recommended;
 
     public AdvertSummaryView(Advert advert) {
         this.id = advert.getId();
         this.title = advert.getTitle();
         this.pic = advert.getBase64();
         this.date = advert.getDate();
+        recommended = false;
     }
 }
