@@ -107,18 +107,21 @@ public class AdvertUserService {
         int recommendedAdvertLimit = pageSize / 2;
         Integer recommendedAdvertSize = recommendedAdvertLimit;
 
-        for (Map.Entry<Long, Double> entry : categoryEntries.entrySet()) {
-            Long catId = entry.getKey();
-            Double val = entry.getValue();
-            int categoryLimit = (int) Math.round(val * recommendedAdvertSize.doubleValue());
-            List<Advert> catAdverts = filterByCategoryId(advertList, catId).subList(0, categoryLimit - 1);
-            Collections.shuffle(catAdverts);
-            if (recommendedAdvertLimit > 0) {
-                int newLimit = recommendedAdvertLimit - categoryLimit;
-                recommendedAdverts.addAll(catAdverts);
-                if (newLimit <= 0)
-                    break;
-                recommendedAdvertLimit = newLimit;
+        if (categoryEntries != null) {
+            for (Map.Entry<Long, Double> entry : categoryEntries.entrySet()) {
+                Long catId = entry.getKey();
+                Double val = entry.getValue();
+                int categoryLimit = (int) Math.round(val * recommendedAdvertSize.doubleValue());
+                List<Advert> catAdverts = filterByCategoryId(advertList, catId)
+                        .subList(0, categoryLimit > 0 ? categoryLimit : 0);
+                Collections.shuffle(catAdverts);
+                if (recommendedAdvertLimit > 0) {
+                    int newLimit = recommendedAdvertLimit - categoryLimit;
+                    recommendedAdverts.addAll(catAdverts);
+                    if (newLimit <= 0)
+                        break;
+                    recommendedAdvertLimit = newLimit;
+                }
             }
         }
         recommendedAdverts.addAll(advertList);
