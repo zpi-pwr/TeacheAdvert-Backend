@@ -114,7 +114,7 @@ public class AdvertUserService {
                 List<Advert> catAdverts = filterByCategoryId(advertList, catId);
                 Collections.shuffle(catAdverts);
                 if (categoryLimit > 0)
-                    catAdverts = catAdverts.subList(0, categoryLimit);
+                    catAdverts = catAdverts.subList(0, categoryLimit - 1k);
                 if (recommendedAdvertLimit > 0) {
                     int newLimit = recommendedAdvertLimit - categoryLimit;
                     recommendedAdverts.addAll(catAdverts);
