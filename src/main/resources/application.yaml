@@ -8,6 +8,7 @@ spring:
     password: NVnTV7vfed0K-W7uGFD7ZmRIX1Z7MjRn
 
   jpa:
+    database: postgresql
     dialect: org.hibernate.dialect.PostgreSQL9Dialect
     hibernate:
       ddl-auto: update

@@ -10,15 +10,18 @@ import ppztw.AdvertBoard.Payload.ProfileInfo;
 import ppztw.AdvertBoard.Repository.ProfileRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.UserPrincipal;
+import ppztw.AdvertBoard.Util.CategoryEntryUtils;
+
+import java.util.Map;
 
 @Service
 public class UserService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    ProfileRepository profileRepository;
+    private ProfileRepository profileRepository;
 
     @Transactional
     public void processProfile(UserPrincipal userPrincipal, ProfileInfo profileInfo) {
@@ -34,8 +37,30 @@ public class UserService {
         profile.setVisibleName(profileInfo.getVisibleName());
         user.setProfile(profile);
 
+        Map<Long, Double> categoryEntries = profileInfo.getCategoryEntries();
+        if (categoryEntries != null) {
+            Map<Long, Double> userCategoryEntries = user.getCategoryEntries();
+            if (userCategoryEntries != null) {
+                for (Map.Entry<Long, Double> entry : categoryEntries.entrySet()) {
+                    Long catId = entry.getKey();
+                    Double val = entry.getValue();
+                    if (userCategoryEntries.containsKey(catId)) {
+                        Double oldVal = userCategoryEntries.get(catId);
+                        userCategoryEntries.put(catId, oldVal + val);
+                    }
+                }
+                user.setCategoryEntries(userCategoryEntries);
+            } else
+                user.setCategoryEntries(categoryEntries);
+        }
         userRepository.save(user);
         profileRepository.save(profile);
     }
 
+    public void addCategoryEntry(Long categoryId, User user, Double val) {
+        Map<Long, Double> categoryEntries = user.getCategoryEntries();
+        categoryEntries = CategoryEntryUtils.addEntryValue(categoryId, user, val);
+        user.setCategoryEntries(categoryEntries);
+        userRepository.save(user);
+    }
 }

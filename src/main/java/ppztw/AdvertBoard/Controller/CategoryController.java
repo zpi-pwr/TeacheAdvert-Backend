@@ -8,17 +8,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ppztw.AdvertBoard.Advert.AdvertUserService;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Advert.Advert;
 import ppztw.AdvertBoard.Model.Advert.Category;
 import ppztw.AdvertBoard.Model.Advert.CategoryInfo;
 import ppztw.AdvertBoard.Model.Advert.InfoType;
+import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.Payload.Advert.CreateCategoryRequest;
 import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Repository.Advert.AdvertRepository;
 import ppztw.AdvertBoard.Repository.Advert.CategoryRepository;
+import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
+import ppztw.AdvertBoard.User.UserService;
 import ppztw.AdvertBoard.Util.PageUtils;
 import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 import ppztw.AdvertBoard.View.Advert.CategoryView;
@@ -28,6 +32,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,6 +46,15 @@ public class CategoryController {
 
     @Autowired
     private AdvertRepository advertRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AdvertUserService advertUserService;
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('USER')")
@@ -108,19 +122,39 @@ public class CategoryController {
     @GetMapping("/get")
     @PreAuthorize("permitAll()")
     public Page<AdvertSummaryView> getCategoryAdverts(
+            @CurrentUser UserPrincipal userPrincipal,
             @RequestParam Long categoryId, Pageable pageable,
             @RequestParam(required = false) LocalDate maxDate,
             @RequestParam(required = false) LocalDate minDate,
             @RequestParam(required = false) String titleContains) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
-        PageUtils<AdvertSummaryView> pageUtils = new PageUtils<>();
-        List<Advert> adverts = category.getAdverts();
+        Optional<User> user = Optional.empty();
+        if (userPrincipal != null)
+            user = userRepository.findById(userPrincipal.getId());
         List<AdvertSummaryView> advertViews = new ArrayList<>();
-        for (Advert advert : adverts) {
-            if (advert.getStatus() != Advert.Status.ARCHIVED && advert.getStatus() != Advert.Status.BANNED)
-                advertViews.add(new AdvertSummaryView(advert));
+        List<Advert> adverts = category.getAdverts().stream()
+                .filter(advert -> advert.getStatus() != Advert.Status.ARCHIVED
+                        && advert.getStatus() != Advert.Status.BANNED)
+                .collect(Collectors.toList());
+        int recommendedSize = 0;
+        if (user.isPresent()) {
+            List<Advert> recommendedAdverts = advertUserService.getRecommendedAdvertList(user.get(),
+                    adverts, pageable.getPageSize());
+            recommendedSize = recommendedAdverts.size() - adverts.size();
+            adverts = recommendedAdverts;
+            userService.addCategoryEntry(categoryId, user.get(), 0.01);
         }
+        for (int i = 0; i < adverts.size(); i++) {
+            AdvertSummaryView advertView = new AdvertSummaryView(adverts.get(i));
+            if (i < recommendedSize)
+                advertView.setRecommended(true);
+            advertViews.add(advertView);
+        }
+
+        PageUtils<AdvertSummaryView> pageUtils = new PageUtils<>();
+
+
 
         if (maxDate != null)
             advertViews = advertViews.stream()

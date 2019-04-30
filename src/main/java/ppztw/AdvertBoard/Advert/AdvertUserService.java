@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ppztw.AdvertBoard.Exception.BadRequestException;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Advert.*;
+import ppztw.AdvertBoard.Model.Profile;
 import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.Payload.Advert.CreateAdvertRequest;
 import ppztw.AdvertBoard.Payload.Advert.EditAdvertRequest;
@@ -15,12 +16,12 @@ import ppztw.AdvertBoard.Repository.Advert.AdvertRepository;
 import ppztw.AdvertBoard.Repository.Advert.CategoryInfoRepository;
 import ppztw.AdvertBoard.Repository.Advert.CategoryRepository;
 import ppztw.AdvertBoard.Repository.Advert.TagRepository;
+import ppztw.AdvertBoard.Repository.ProfileRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
+import ppztw.AdvertBoard.Util.CategoryEntryUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AdvertUserService {
@@ -40,6 +41,9 @@ public class AdvertUserService {
     @Autowired
     private AdvertRepository advertRepository;
 
+    @Autowired
+    private ProfileRepository profileRepository;
+
     public Optional<Advert> findAdvert(Long userId, Long id) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException("User", "id", userId));
@@ -48,6 +52,9 @@ public class AdvertUserService {
         for (Advert adv : adverts)
             if (adv.getId().equals(id)) {
                 advert = adv;
+                user.setCategoryEntries(
+                        CategoryEntryUtils.addEntryValue(advert.getSubcategory().getId(), user, 0.01));
+                userRepository.save(user);
                 break;
             }
 
@@ -57,6 +64,8 @@ public class AdvertUserService {
     public void addAdvert(Long userId, CreateAdvertRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException("User", "id", userId));
+        Profile profile = profileRepository.findByUserId(userId).orElseThrow(() ->
+                new BadRequestException("Musisz posiadać publiczny profil, aby dodawać ogłoszenia"));
         Category category = categoryRepository.findById(request.getCategory())
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id",
                         request.getCategory()));
@@ -90,6 +99,40 @@ public class AdvertUserService {
         advert.setStatus(Advert.Status.EDITED);
         advertRepository.save(advert);
     }
+
+    public List<Advert> getRecommendedAdvertList(User user, List<Advert> advertList, Integer pageSize) {
+        Map<Long, Double> categoryEntries = user.getCategoryEntries();
+        List<Advert> recommendedAdverts = new ArrayList<>();
+        int recommendedAdvertLimit = pageSize / 2;
+        Integer recommendedAdvertSize = recommendedAdvertLimit;
+
+        if (categoryEntries != null) {
+            for (Map.Entry<Long, Double> entry : categoryEntries.entrySet()) {
+                Long catId = entry.getKey();
+                Double val = entry.getValue();
+                int categoryLimit = (int) Math.round(val * recommendedAdvertSize.doubleValue());
+                List<Advert> catAdverts = filterByCategoryId(advertList, catId)
+                        .subList(0, categoryLimit > 0 ? categoryLimit : 0);
+                Collections.shuffle(catAdverts);
+                if (recommendedAdvertLimit > 0) {
+                    int newLimit = recommendedAdvertLimit - categoryLimit;
+                    recommendedAdverts.addAll(catAdverts);
+                    if (newLimit <= 0)
+                        break;
+                    recommendedAdvertLimit = newLimit;
+                }
+            }
+        }
+        recommendedAdverts.addAll(advertList);
+        return recommendedAdverts;
+    }
+
+    private List<Advert> filterByCategoryId(List<Advert> advertList, Long categoryId) {
+        return advertList.stream()
+                .filter(advert -> advert.getSubcategory().getId().equals(categoryId))
+                .collect(Collectors.toList());
+    }
+
 
     private Advert addNewAdvert(String title, List<String> tagNames, String description,
                                 ImagePayload imagePayload, Category category,
@@ -146,4 +189,6 @@ public class AdvertUserService {
         return imagePayload != null ? new Image(imagePayload.getName(),
                 Base64.decodeBase64(imagePayload.getBase64())) : null;
     }
+
+
 }
