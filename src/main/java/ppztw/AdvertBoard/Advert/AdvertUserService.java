@@ -18,6 +18,7 @@ import ppztw.AdvertBoard.Repository.Advert.CategoryRepository;
 import ppztw.AdvertBoard.Repository.Advert.TagRepository;
 import ppztw.AdvertBoard.Repository.ProfileRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
+import ppztw.AdvertBoard.User.UserService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,6 +44,9 @@ public class AdvertUserService {
     @Autowired
     private ProfileRepository profileRepository;
 
+    @Autowired
+    private UserService userService;
+
     public Optional<Advert> findAdvert(Long userId, Long id) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException("User", "id", userId));
@@ -51,6 +55,7 @@ public class AdvertUserService {
         for (Advert adv : adverts)
             if (adv.getId().equals(id)) {
                 advert = adv;
+                userService.addCategoryEntry(advert.getSubcategory().getId(), user, 0.01);
                 break;
             }
 
