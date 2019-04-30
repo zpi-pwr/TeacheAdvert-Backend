@@ -51,3 +51,5 @@ app:
       - http://localhost:3000/oauth2/redirect
       - http://advertboard.pl:3000/oauth2/redirect
       - http://pwr-advert-board-frontend.herokuapp.com/oauth2/redirect
+
+
