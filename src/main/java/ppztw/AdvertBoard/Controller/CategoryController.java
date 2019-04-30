@@ -129,7 +129,9 @@ public class CategoryController {
             @RequestParam(required = false) String titleContains) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
-        Optional<User> user = userRepository.findById(userPrincipal.getId());
+        Optional<User> user = Optional.empty();
+        if (userPrincipal != null)
+            user = userRepository.findById(userPrincipal.getId());
         List<AdvertSummaryView> advertViews = new ArrayList<>();
         List<Advert> adverts = category.getAdverts().stream()
                 .filter(advert -> advert.getStatus() != Advert.Status.ARCHIVED
