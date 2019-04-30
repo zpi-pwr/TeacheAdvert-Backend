@@ -19,10 +19,8 @@ import ppztw.AdvertBoard.Repository.Advert.TagRepository;
 import ppztw.AdvertBoard.Repository.ProfileRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AdvertUserService {
@@ -98,6 +96,37 @@ public class AdvertUserService {
         advertRepository.save(advert);
     }
 
+    public List<Advert> getRecommendedAdvertList(User user, List<Advert> advertList, Integer pageSize) {
+        Map<Long, Double> categoryEntries = user.getCategoryEntries();
+        List<Advert> recommendedAdverts = new ArrayList<>();
+        int recommendedAdvertLimit = pageSize / 2;
+        Integer recommendedAdvertSize = recommendedAdvertLimit;
+
+        for (Map.Entry<Long, Double> entry : categoryEntries.entrySet()) {
+            Long catId = entry.getKey();
+            Double val = entry.getValue();
+            int categoryLimit = (int) Math.round(val * recommendedAdvertSize.doubleValue());
+            List<Advert> catAdverts = filterByCategoryId(advertList, catId).subList(0, categoryLimit - 1);
+            Collections.shuffle(catAdverts);
+            if (recommendedAdvertLimit > 0) {
+                int newLimit = recommendedAdvertLimit - categoryLimit;
+                recommendedAdverts.addAll(catAdverts);
+                if (newLimit <= 0)
+                    break;
+                recommendedAdvertLimit = newLimit;
+            }
+        }
+        recommendedAdverts.addAll(advertList);
+        return recommendedAdverts;
+    }
+
+    private List<Advert> filterByCategoryId(List<Advert> advertList, Long categoryId) {
+        return advertList.stream()
+                .filter(advert -> advert.getSubcategory().getId().equals(categoryId))
+                .collect(Collectors.toList());
+    }
+
+
     private Advert addNewAdvert(String title, List<String> tagNames, String description,
                                 ImagePayload imagePayload, Category category,
                                 User user,
@@ -153,4 +182,6 @@ public class AdvertUserService {
         return imagePayload != null ? new Image(imagePayload.getName(),
                 Base64.decodeBase64(imagePayload.getBase64())) : null;
     }
+
+
 }
