@@ -61,14 +61,12 @@ public class AdvertUserServiceIntegrationTests {
 
         profile.setUser(user);
         advert.setUser(user);
-        advert.setSubcategory(category);
+        advert.setCategory(category);
         List<Advert> advertList = new ArrayList<>();
         advertList.add(advert);
 
         user.setProfile(profile);
         user.setAdverts(advertList);
-        category.setAdverts(advertList);
-
 
         Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         Mockito.when(advertRepository.findById(advert.getId())).thenReturn(Optional.of(advert));
