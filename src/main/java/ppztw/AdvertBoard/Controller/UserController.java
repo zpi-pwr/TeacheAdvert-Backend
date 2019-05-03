@@ -2,6 +2,7 @@ package ppztw.AdvertBoard.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,7 +17,6 @@ import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 import ppztw.AdvertBoard.User.UserService;
-import ppztw.AdvertBoard.Util.PageUtils;
 import ppztw.AdvertBoard.View.User.ProfileSummaryView;
 import ppztw.AdvertBoard.View.User.ProfileView;
 import ppztw.AdvertBoard.View.User.UserView;
@@ -24,7 +24,6 @@ import ppztw.AdvertBoard.View.User.UserView;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
@@ -59,17 +58,17 @@ public class UserController {
     @PreAuthorize("permitAll()")
     public Page<ProfileSummaryView> getAllUsers(Pageable pageable,
                                                 @RequestParam(required = false) String nameContains) {
-        PageUtils<ProfileSummaryView> pageUtils = new PageUtils<>();
 
-        List<Profile> profiles = profileRepository.findAll();
-        List<ProfileSummaryView> profileViews = new ArrayList<>();
+        Page<Profile> profiles;
+        if (nameContains != null && !nameContains.isEmpty())
+            profiles = profileRepository.findAllByVisibleNameLike(nameContains, pageable);
+        else
+            profiles = profileRepository.findAll(pageable);
+
+        List<ProfileSummaryView> profileSummaryViewList = new ArrayList<>();
         for (Profile profile : profiles)
-            profileViews.add(new ProfileSummaryView(profile));
-        if (nameContains != null)
-            profileViews = profileViews.stream()
-                    .filter(profile -> profile.getVisibleName().contains(nameContains))
-                    .collect(Collectors.toList());
-        return pageUtils.getPage(profileViews, pageable);
+            profileSummaryViewList.add(new ProfileSummaryView(profile));
+        return new PageImpl<>(profileSummaryViewList, pageable, profiles.getTotalElements());
     }
 
 
