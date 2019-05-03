@@ -39,7 +39,7 @@ public class Advert {
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
-    private Category subcategory;
+    private Category category;
 
 
     @Column(nullable = false)
@@ -70,7 +70,7 @@ public class Advert {
         this.description = description;
         this.image = image;
         this.tags = tags;
-        this.subcategory = subcategory;
+        this.category = subcategory;
         this.date = LocalDate.now();
         this.user = user;
         this.additionalInfo = additionalInfo;

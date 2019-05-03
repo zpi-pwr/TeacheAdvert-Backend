@@ -3,8 +3,6 @@ package ppztw.AdvertBoard.Advert;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ppztw.AdvertBoard.Exception.BadRequestException;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
@@ -21,11 +19,11 @@ import ppztw.AdvertBoard.Repository.Advert.TagRepository;
 import ppztw.AdvertBoard.Repository.ProfileRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Util.CategoryEntryUtils;
-import ppztw.AdvertBoard.Util.PageUtils;
-import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AdvertUserService {
@@ -57,7 +55,7 @@ public class AdvertUserService {
             if (adv.getId().equals(id)) {
                 advert = adv;
                 user.setCategoryEntries(
-                        CategoryEntryUtils.addEntryValue(advert.getSubcategory().getId(), user, 0.01));
+                        CategoryEntryUtils.addEntryValue(advert.getCategory().getId(), user, 0.01));
                 userRepository.save(user);
                 break;
             }
@@ -79,10 +77,7 @@ public class AdvertUserService {
                 request.getImage(), category, user, request.getAdditionalInfo());
         advertList.add(advert);
         user.setAdverts(advertList);
-        category.addAdvert(advert);
-
         userRepository.save(user);
-        categoryRepository.save(category);
 
     }
 
@@ -98,46 +93,10 @@ public class AdvertUserService {
                 processImage(request.getImage()));
         advert.setAdditionalInfo(request.getAdditionalInfo() == null ?
                 advert.getAdditionalInfo() :
-                processAdvertInfo(advert.getSubcategory(), request.getAdditionalInfo()));
+                processAdvertInfo(advert.getCategory(), request.getAdditionalInfo()));
 
         advert.setStatus(Advert.Status.EDITED);
         advertRepository.save(advert);
-    }
-
-    public List<Advert> getRecommendedAdvertList(User user, List<Advert> advertList, Integer pageSize) {
-        Map<Long, Double> categoryEntries = user.getCategoryEntries();
-        List<Advert> recommendedAdverts = new ArrayList<>();
-        int recommendedAdvertLimit = pageSize / 2;
-        Integer recommendedAdvertSize = recommendedAdvertLimit;
-
-        if (categoryEntries != null) {
-            for (Map.Entry<Long, Double> entry : categoryEntries.entrySet()) {
-                Long catId = entry.getKey();
-                Double val = entry.getValue();
-                int categoryLimit = (int) Math.round(val * recommendedAdvertSize.doubleValue());
-                List<Advert> catAdverts = filterByCategoryId(advertList, catId);
-                Collections.shuffle(catAdverts);
-                if (categoryLimit > 0) {
-                    if (catAdverts.size() > categoryLimit)
-                        catAdverts = catAdverts.subList(0, categoryLimit - 1);
-                }
-                if (recommendedAdvertLimit > 0) {
-                    int newLimit = recommendedAdvertLimit - categoryLimit;
-                    recommendedAdverts.addAll(catAdverts);
-                    if (newLimit <= 0)
-                        break;
-                    recommendedAdvertLimit = newLimit;
-                }
-            }
-        }
-        recommendedAdverts.addAll(advertList);
-        return recommendedAdverts;
-    }
-
-    private List<Advert> filterByCategoryId(List<Advert> advertList, Long categoryId) {
-        return advertList.stream()
-                .filter(advert -> advert.getSubcategory().getId().equals(categoryId))
-                .collect(Collectors.toList());
     }
 
 
@@ -195,23 +154,6 @@ public class AdvertUserService {
     private Image processImage(ImagePayload imagePayload) {
         return imagePayload != null ? new Image(imagePayload.getName(),
                 Base64.decodeBase64(imagePayload.getBase64())) : null;
-    }
-
-
-    public Page<AdvertSummaryView> getPage(List<Advert> adverts, int recommendedSize, Pageable pageable) {
-
-        PageUtils<AdvertSummaryView> pageUtils = new PageUtils<>();
-
-        List<AdvertSummaryView> advertViews = new ArrayList<>();
-
-        for (int i = 0; i < adverts.size(); i++) {
-            AdvertSummaryView advertView = new AdvertSummaryView(adverts.get(i));
-            if (i < recommendedSize)
-                advertView.setRecommended(true);
-            advertViews.add(advertView);
-        }
-
-        return pageUtils.getPage(advertViews, pageable);
     }
 
 }
