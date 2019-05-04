@@ -24,6 +24,7 @@ import ppztw.AdvertBoard.View.Advert.AdvertDetailsView;
 import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -89,7 +90,7 @@ public class AdvertController {
         return new AdvertDetailsView(advert);
     }
 
-    @GetMapping("/get")
+    @GetMapping("/browse")
     @PreAuthorize("permitAll()")
     public Page<AdvertSummaryView> getAdverts(
             @CurrentUser UserPrincipal userPrincipal,
@@ -102,5 +103,11 @@ public class AdvertController {
         }
 
         return advertService.getPageByCategoryId(categoryId, pageable, titleContains);
+    }
+
+    @GetMapping("recommended")
+    public List<AdvertSummaryView> getRecommendedAdverts(@CurrentUser UserPrincipal userPrincipal,
+                                                         @RequestParam Long advertCount) {
+        return advertUserService.getRecommendedAdverts(userPrincipal.getId(), advertCount);
     }
 }
