@@ -79,10 +79,13 @@ public class AdvertController {
 
     @GetMapping("get")
     @PreAuthorize("permitAll()")
-    public AdvertDetailsView getAdvert(@RequestParam Long id) {
+    public AdvertDetailsView getAdvert(@CurrentUser UserPrincipal userPrincipal, @RequestParam Long id) {
         Advert advert = advertRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Advert", "id", id));
-
+        if (userPrincipal != null) {
+            Optional<User> user = userRepository.findById(userPrincipal.getId());
+            userService.addCategoryEntry(advert.getCategory().getId(), user.get(), 0.01);
+        }
         return new AdvertDetailsView(advert);
     }
 
