@@ -98,7 +98,7 @@ public class AdvertController {
 
         if (userPrincipal != null) {
             Optional<User> user = userRepository.findById(userPrincipal.getId());
-            userService.addCategoryEntry(categoryId, user.get(), 0.01);
+            userService.addCategoryEntry(categoryId, user.get(), 0.001);
         }
 
         return advertService.getPageByCategoryId(categoryId, pageable, titleContains);
