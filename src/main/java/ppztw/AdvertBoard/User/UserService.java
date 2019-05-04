@@ -36,23 +36,9 @@ public class UserService {
         profile.setTelephoneNumber(profileInfo.getTelephoneNumber());
         profile.setVisibleName(profileInfo.getVisibleName());
         user.setProfile(profile);
+        if (profileInfo.getCategoryEntries() != null)
+            user.setCategoryEntries(profileInfo.getCategoryEntries());
 
-        Map<Long, Double> categoryEntries = profileInfo.getCategoryEntries();
-        if (categoryEntries != null) {
-            Map<Long, Double> userCategoryEntries = user.getCategoryEntries();
-            if (userCategoryEntries != null) {
-                for (Map.Entry<Long, Double> entry : categoryEntries.entrySet()) {
-                    Long catId = entry.getKey();
-                    Double val = entry.getValue();
-                    if (userCategoryEntries.containsKey(catId)) {
-                        Double oldVal = userCategoryEntries.get(catId);
-                        userCategoryEntries.put(catId, oldVal + val);
-                    }
-                }
-                user.setCategoryEntries(userCategoryEntries);
-            } else
-                user.setCategoryEntries(categoryEntries);
-        }
         userRepository.save(user);
         profileRepository.save(profile);
     }
