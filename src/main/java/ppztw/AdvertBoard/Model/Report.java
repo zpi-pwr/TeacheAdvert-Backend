@@ -23,4 +23,11 @@ public class Report {
 
     String comment;
 
+    Report(User reportingUser, Advert reportedAdvert, String comment) {
+        this.reportingUser = reportingUser;
+        this.reportedAdvert = reportedAdvert;
+        this.comment = comment;
+    }
+
+
 }
