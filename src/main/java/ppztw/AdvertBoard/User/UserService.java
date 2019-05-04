@@ -41,7 +41,9 @@ public class UserService {
         profileRepository.save(profile);
     }
 
-    public void addCategoryEntry(Long categoryId, User user, Double val) {
+    public void addCategoryEntry(Long categoryId, Long userId, Double val) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException("User", "id", userId));
         user.setCategoryEntries(CategoryEntryUtils.addEntryValue(categoryId, user, val));
         userRepository.save(user);
     }

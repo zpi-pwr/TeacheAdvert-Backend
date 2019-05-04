@@ -11,7 +11,6 @@ import ppztw.AdvertBoard.Advert.AdvertService;
 import ppztw.AdvertBoard.Advert.AdvertUserService;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Advert.Advert;
-import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.Payload.Advert.CreateAdvertRequest;
 import ppztw.AdvertBoard.Payload.Advert.EditAdvertRequest;
 import ppztw.AdvertBoard.Payload.ApiResponse;
@@ -25,7 +24,6 @@ import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/advert")
@@ -84,8 +82,7 @@ public class AdvertController {
         Advert advert = advertRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Advert", "id", id));
         if (userPrincipal != null) {
-            Optional<User> user = userRepository.findById(userPrincipal.getId());
-            userService.addCategoryEntry(advert.getCategory().getId(), user.get(), 0.01);
+            userService.addCategoryEntry(advert.getCategory().getId(), userPrincipal.getId(), 0.01);
         }
         return new AdvertDetailsView(advert);
     }
@@ -98,8 +95,7 @@ public class AdvertController {
             @RequestParam(required = false) String titleContains) {
 
         if (userPrincipal != null) {
-            Optional<User> user = userRepository.findById(userPrincipal.getId());
-            userService.addCategoryEntry(categoryId, user.get(), 0.001);
+            userService.addCategoryEntry(categoryId, userPrincipal.getId(), 0.001);
         }
 
         return advertService.getPageByCategoryId(categoryId, pageable, titleContains);
