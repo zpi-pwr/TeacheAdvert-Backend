@@ -19,6 +19,8 @@ import ppztw.AdvertBoard.Repository.Advert.TagRepository;
 import ppztw.AdvertBoard.Repository.ProfileRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Util.CategoryEntryUtils;
+import ppztw.AdvertBoard.Util.StatisticsUtils;
+import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -154,6 +156,26 @@ public class AdvertUserService {
     private Image processImage(ImagePayload imagePayload) {
         return imagePayload != null ? new Image(imagePayload.getName(),
                 Base64.decodeBase64(imagePayload.getBase64())) : null;
+    }
+
+
+    public List<AdvertSummaryView> getRecommendedAdverts(Long userId, Long advertCount) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException("User", "id", userId));
+        List<AdvertSummaryView> advertSummaryViews = new ArrayList<>();
+        if (user.getCategoryEntries() != null)
+            for (Map.Entry<Long, Double> entry :
+                    StatisticsUtils.normalizeIntoDistribution(user.getCategoryEntries()).entrySet()) {
+
+                List<Advert> adverts = advertRepository.findRandomByCategoryId(entry.getKey(),
+                        Math.toIntExact(Math.round(entry.getValue() * advertCount.doubleValue())));
+                for (Advert advert : adverts) {
+                    AdvertSummaryView view = new AdvertSummaryView(advert);
+                    view.setRecommended(true);
+                    advertSummaryViews.add(view);
+                }
+            }
+        return advertSummaryViews;
     }
 
 }
