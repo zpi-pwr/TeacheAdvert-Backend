@@ -12,8 +12,6 @@ import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.UserPrincipal;
 import ppztw.AdvertBoard.Util.CategoryEntryUtils;
 
-import java.util.Map;
-
 @Service
 public class UserService {
 
@@ -44,9 +42,7 @@ public class UserService {
     }
 
     public void addCategoryEntry(Long categoryId, User user, Double val) {
-        Map<Long, Double> categoryEntries = user.getCategoryEntries();
-        categoryEntries = CategoryEntryUtils.addEntryValue(categoryId, user, val);
-        user.setCategoryEntries(categoryEntries);
+        user.setCategoryEntries(CategoryEntryUtils.addEntryValue(categoryId, user, val));
         userRepository.save(user);
     }
 }
