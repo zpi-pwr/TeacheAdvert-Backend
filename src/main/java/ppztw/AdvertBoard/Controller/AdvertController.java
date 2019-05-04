@@ -13,7 +13,9 @@ import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Advert.Advert;
 import ppztw.AdvertBoard.Payload.Advert.CreateAdvertRequest;
 import ppztw.AdvertBoard.Payload.Advert.EditAdvertRequest;
+import ppztw.AdvertBoard.Payload.Advert.ReportAdvertRequest;
 import ppztw.AdvertBoard.Payload.ApiResponse;
+import ppztw.AdvertBoard.Report.ReportService;
 import ppztw.AdvertBoard.Repository.Advert.AdvertRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.CurrentUser;
@@ -43,6 +45,9 @@ public class AdvertController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ReportService reportService;
 
     @PostMapping(value = "/add")
     @PreAuthorize("hasRole('USER')")
@@ -106,4 +111,12 @@ public class AdvertController {
                                                          @RequestParam Long advertCount) {
         return advertUserService.getRecommendedAdverts(userPrincipal.getId(), advertCount);
     }
+
+    @PostMapping("report")
+    public ResponseEntity<?> reportAdvert(@CurrentUser UserPrincipal userPrincipal,
+                                          @Valid @RequestBody ReportAdvertRequest request) {
+        reportService.addReport(userPrincipal.getId(), request.getAdvertId(), request.getComment());
+        return ResponseEntity.ok(new ApiResponse(true, "Report added"));
+    }
+
 }
