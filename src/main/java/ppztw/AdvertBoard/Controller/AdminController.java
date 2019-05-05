@@ -37,6 +37,16 @@ public class AdminController {
         return adminService.getAllReportsByCaseStatus(caseStatus, pageable);
     }
 
+    @PostMapping("/report/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<?> setReportCaseStatus(@CurrentUser UserPrincipal userPrincipal,
+                                          @RequestParam Long reportId,
+                                          @RequestParam CaseStatus status) {
+
+        adminService.setReportCaseStatus(reportId, status);
+        return ResponseEntity.ok(new ApiResponse(true, "Status changed"));
+    }
+
     @PostMapping("/advert/status")
     @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<?> setAdvertStatus(@CurrentUser UserPrincipal userPrincipal, @RequestParam Long advertId,

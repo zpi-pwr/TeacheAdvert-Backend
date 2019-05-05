@@ -41,6 +41,14 @@ public class AdminService {
         return new PageImpl<>(reportViewList, pageable, reports.getTotalElements());
     }
 
+    public void setReportCaseStatus(Long reportId, CaseStatus caseStatus) {
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new ResourceNotFoundException("Report", "id", reportId));
+        report.setCaseStatus(caseStatus);
+
+        reportRepository.save(report);
+    }
+
     public void setAdvertStatus(Long advertId, Advert.Status status) {
         Advert advert = advertRepository.findById(advertId)
                 .orElseThrow(() -> new ResourceNotFoundException("Advert", "id", advertId));
