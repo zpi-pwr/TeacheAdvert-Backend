@@ -57,4 +57,6 @@ public class User {
     @ElementCollection
     private Map<Long, Double> categoryEntries;
 
+    private Role role = Role.user;
+
 }
