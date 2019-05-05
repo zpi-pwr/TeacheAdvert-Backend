@@ -1,8 +1,6 @@
 package ppztw.AdvertBoard.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -12,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import ppztw.AdvertBoard.Advert.AdvertService;
 import ppztw.AdvertBoard.Advert.AdvertUserService;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
@@ -33,8 +30,6 @@ import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
@@ -132,12 +127,14 @@ public class AdvertController {
     }
 
     @GetMapping("recommended")
+    @PreAuthorize("hasRole('USER')")
     public List<AdvertSummaryView> getRecommendedAdverts(@CurrentUser UserPrincipal userPrincipal,
                                                          @RequestParam Long advertCount) {
         return advertUserService.getRecommendedAdverts(userPrincipal.getId(), advertCount);
     }
 
     @PostMapping("report")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> reportAdvert(@CurrentUser UserPrincipal userPrincipal,
                                           @Valid @RequestBody ReportAdvertRequest request) {
         reportService.addReport(userPrincipal.getId(), request.getAdvertId(), request.getComment());
@@ -146,11 +143,10 @@ public class AdvertController {
 
 
     @GetMapping(value = "/image", produces = MediaType.IMAGE_PNG_VALUE)
-    public @ResponseBody
-    ResponseEntity<?> getImage(@RequestParam("advertId") Long advertId) {
-
+    @ResponseBody
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> getImage(@RequestParam("advertId") Long advertId) {
         ResponseEntity<?> response;
-
         try {
             response = ResponseEntity.ok(advertService.loadImage(advertId));
         } catch (MalformedURLException e) {
