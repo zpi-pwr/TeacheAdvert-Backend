@@ -13,6 +13,7 @@ import ppztw.AdvertBoard.Model.User.CaseStatus;
 import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Security.CurrentUser;
 import ppztw.AdvertBoard.Security.UserPrincipal;
+import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 import ppztw.AdvertBoard.View.ReportView;
 
 @RestController
@@ -54,6 +55,13 @@ public class AdminController {
 
         adminService.setAdvertStatus(advertId, status);
         return ResponseEntity.ok(new ApiResponse(true, "Status changed"));
+    }
+
+    @GetMapping("/advert/banned")
+    @PreAuthorize("hasRole('ADMIN')")
+    Page<AdvertSummaryView> getBannedAdverts(@CurrentUser UserPrincipal userPrincipal,
+                                             Pageable pageable) {
+        return adminService.getAdvertsByStatus(Advert.Status.BANNED, pageable);
     }
 
 

@@ -11,6 +11,7 @@ import ppztw.AdvertBoard.Model.User.CaseStatus;
 import ppztw.AdvertBoard.Model.User.Report;
 import ppztw.AdvertBoard.Repository.Advert.AdvertRepository;
 import ppztw.AdvertBoard.Repository.ReportRepository;
+import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 import ppztw.AdvertBoard.View.ReportView;
 
 import java.util.ArrayList;
@@ -55,6 +56,16 @@ public class AdminService {
 
         advert.setStatus(status);
         advertRepository.save(advert);
+    }
+
+    public Page<AdvertSummaryView> getAdvertsByStatus(Advert.Status status, Pageable pageable) {
+        List<AdvertSummaryView> advertSummaryViewList = new ArrayList<>();
+        Page<Advert> adverts = advertRepository.findAllByStatus(pageable, status);
+
+        for (Advert advert : adverts)
+            advertSummaryViewList.add(new AdvertSummaryView(advert));
+
+        return new PageImpl<>(advertSummaryViewList, pageable, adverts.getTotalElements());
     }
 
 }
