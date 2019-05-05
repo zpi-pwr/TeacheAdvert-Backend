@@ -10,7 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
-import ppztw.AdvertBoard.Model.User;
+import ppztw.AdvertBoard.Model.User.User;
 import ppztw.AdvertBoard.Repository.ProfileRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.User.UserService;

@@ -1,4 +1,4 @@
-package ppztw.AdvertBoard.Model;
+package ppztw.AdvertBoard.Model.User;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
