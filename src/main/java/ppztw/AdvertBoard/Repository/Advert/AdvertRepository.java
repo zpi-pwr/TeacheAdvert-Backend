@@ -17,7 +17,7 @@ public interface AdvertRepository extends JpaRepository<Advert, Long> {
     Page<Advert> findAllByCategoryIdIn(@Param("ids") List<Long> categoryIdList, Pageable pageable);
 
     @Query("SELECT a FROM #{#entityName} a " +
-            "WHERE a.category.id AND a.status IN (0, 1) IN :ids AND a.title LIKE CONCAT('%',:substr,'%')")
+            "WHERE a.category.id IN :ids AND a.status IN (0, 1) AND a.title LIKE CONCAT('%',:substr,'%')")
     Page<Advert> findAllByCategoryIdInAndTitleLike(@Param("ids") List<Long> categoryIdList,
                                                    @Param("substr") String titleContains,
                                                    Pageable pageable);
