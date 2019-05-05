@@ -5,6 +5,7 @@ import lombok.Setter;
 import ppztw.AdvertBoard.Model.Advert.Advert;
 import ppztw.AdvertBoard.Model.User.AuthProvider;
 import ppztw.AdvertBoard.Model.User.Profile;
+import ppztw.AdvertBoard.Model.User.Role;
 import ppztw.AdvertBoard.Model.User.User;
 import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 
@@ -20,6 +21,7 @@ public class UserView {
     private List<AdvertSummaryView> adverts;
     private AuthProvider provider;
     private MyProfileView profileView;
+    private Role role;
 
     public UserView(User user) {
         this.name = user.getName();
@@ -31,5 +33,6 @@ public class UserView {
         this.provider = user.getProvider();
         Profile profile = user.getProfile();
         this.profileView = profile == null ? null : new MyProfileView(profile);
+        this.role = user.getRole();
     }
 }
