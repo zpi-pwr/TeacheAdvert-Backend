@@ -2,7 +2,9 @@ package ppztw.AdvertBoard.Payload.Advert;
 
 import lombok.Getter;
 import lombok.Setter;
+
 import org.springframework.lang.Nullable;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -25,7 +27,7 @@ public class EditAdvertRequest {
     private String description;
 
     @Nullable
-    private ImagePayload image;
+    private MultipartFile imageFile;
 
     @Nullable
     private Map<Long, String> additionalInfo;

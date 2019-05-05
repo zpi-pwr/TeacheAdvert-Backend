@@ -1,12 +1,18 @@
 package ppztw.AdvertBoard.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import ppztw.AdvertBoard.Advert.AdvertService;
 import ppztw.AdvertBoard.Advert.AdvertUserService;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
@@ -23,7 +29,13 @@ import ppztw.AdvertBoard.View.Advert.AdvertDetailsView;
 import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/advert")
@@ -44,11 +56,34 @@ public class AdvertController {
     @Autowired
     private UserService userService;
 
+//    @PostMapping(value = "/add")
+//    @PreAuthorize("hasRole('USER')")
+//    @Transactional
+//    public ResponseEntity<?> addAdvert(@CurrentUser UserPrincipal userPrincipal,
+//                                       @Valid @RequestBody CreateAdvertRequest createAdvertRequest) {
+//
+//        advertUserService.addAdvert(userPrincipal.getId(), createAdvertRequest);
+//        return ResponseEntity.ok(new ApiResponse(true, "Added new advert"));
+//    }
+
     @PostMapping(value = "/add")
     @PreAuthorize("hasRole('USER')")
     @Transactional
-    public ResponseEntity<?> addAdvert(@CurrentUser UserPrincipal userPrincipal,
-                                       @Valid @RequestBody CreateAdvertRequest createAdvertRequest) {
+    public ResponseEntity<?> addAdvert2(@CurrentUser UserPrincipal userPrincipal,
+                                       @Valid @RequestParam("title") @NotBlank String title,
+                                       @Valid @RequestParam("tags") @Nullable List<String> tags,
+                                       @Valid @RequestParam("description") @NotBlank String description,
+                                       @Valid @RequestParam("category") @NotNull Long category,
+                                       @Valid @RequestParam("additionalInfo") @Nullable Map<Long, String> additionalInfo,
+                                       @Valid @RequestParam("imageFile") @Nullable MultipartFile imageFile) {
+
+        CreateAdvertRequest createAdvertRequest = new CreateAdvertRequest();
+        createAdvertRequest.setTitle(title);
+        createAdvertRequest.setTags(tags);
+        createAdvertRequest.setDescription(description);
+        createAdvertRequest.setCategory(category);
+        createAdvertRequest.setAdditionalInfo(additionalInfo);
+        createAdvertRequest.setImageFile(imageFile);
 
         advertUserService.addAdvert(userPrincipal.getId(), createAdvertRequest);
         return ResponseEntity.ok(new ApiResponse(true, "Added new advert"));
@@ -105,5 +140,21 @@ public class AdvertController {
     public List<AdvertSummaryView> getRecommendedAdverts(@CurrentUser UserPrincipal userPrincipal,
                                                          @RequestParam Long advertCount) {
         return advertUserService.getRecommendedAdverts(userPrincipal.getId(), advertCount);
+    }
+
+    @GetMapping(value = "/image", produces = MediaType.IMAGE_PNG_VALUE)
+    public @ResponseBody
+    ResponseEntity<?> getImage(@RequestParam("advertId") Long advertId) {
+
+        ResponseEntity<?> response;
+
+        try {
+            response = ResponseEntity.ok(advertService.loadImage(advertId));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            response = ResponseEntity.ok(new ApiResponse(false, e.toString()));
+        }
+
+        return response;
     }
 }

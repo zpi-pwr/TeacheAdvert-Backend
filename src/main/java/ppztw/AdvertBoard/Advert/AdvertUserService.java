@@ -1,10 +1,15 @@
 package ppztw.AdvertBoard.Advert;
 
 
+import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import ppztw.AdvertBoard.Exception.BadRequestException;
+import ppztw.AdvertBoard.Exception.IncorrectFileException;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Advert.*;
 import ppztw.AdvertBoard.Model.Profile;
@@ -21,7 +26,13 @@ import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Util.CategoryEntryUtils;
 import ppztw.AdvertBoard.Util.StatisticsUtils;
 import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
+import sun.nio.ch.IOUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +87,7 @@ public class AdvertUserService {
 
         List<Advert> advertList = user.getAdverts() == null ? new ArrayList<Advert>() : user.getAdverts();
         Advert advert = addNewAdvert(request.getTitle(), request.getTags(), request.getDescription(),
-                request.getImage(), category, user, request.getAdditionalInfo());
+                request.getImageFile(), category, user, request.getAdditionalInfo());
         advertList.add(advert);
         user.setAdverts(advertList);
         userRepository.save(user);
@@ -87,12 +98,21 @@ public class AdvertUserService {
         Advert advert = findAdvert(userId, request.getId()).orElseThrow(() ->
                 new ResourceNotFoundException("Advert", "id", request.getId()));
 
+        String imagePath;
+        
+        try {
+            imagePath = saveImage(userId, request.getImageFile());
+        } catch (Exception e) {
+            throw new IncorrectFileException(request.getImageFile() != null ? request.getImageFile().getOriginalFilename() : null, e);
+        }
+    
         advert.setTitle(request.getTitle() == null ? advert.getTitle() : request.getTitle());
         advert.setTags(request.getTags() == null ? advert.getTags() : processTags(request.getTags()));
         advert.setDescription(request.getDescription() == null ?
                 advert.getDescription() : request.getDescription());
-        advert.setImage(request.getImage() == null ? advert.getImage() :
-                processImage(request.getImage()));
+        // advert.setImage(request.getImage() == null ? advert.getImage() :
+        //         processImage(request.getImage()));
+        advert.setImagePath(imagePath == null ? advert.getImagePath() : imagePath);
         advert.setAdditionalInfo(request.getAdditionalInfo() == null ?
                 advert.getAdditionalInfo() :
                 processAdvertInfo(advert.getCategory(), request.getAdditionalInfo()));
@@ -103,16 +123,24 @@ public class AdvertUserService {
 
 
     private Advert addNewAdvert(String title, List<String> tagNames, String description,
-                                ImagePayload imagePayload, Category category,
+                                MultipartFile image, Category category,
                                 User user,
                                 Map<Long, String> additionalInfo) {
 
         List<Tag> tags = processTags(tagNames);
-        Image img = processImage(imagePayload);
+        //Image img = processImage(imagePayload);
+
+        String imagePath;
+        try {
+            imagePath = saveImage(user.getId(), image);
+        } catch (Exception e) {
+            throw new IncorrectFileException(image != null ? image.getOriginalFilename() : null, e);
+        }
+
         List<AdvertInfo> advertInfos = processAdvertInfo(category, additionalInfo);
 
         return advertRepository
-                .save(new Advert(title, tags, description, img, category, user, advertInfos));
+                .save(new Advert(title, tags, description, imagePath, category, user, advertInfos));
     }
 
 
@@ -178,4 +206,14 @@ public class AdvertUserService {
         return advertSummaryViews;
     }
 
+    public String saveImage(Long userId, MultipartFile image) throws Exception {
+        String destinationFolder = "./images/user/" + userId + "/photos";
+        byte[] bytes = image.getBytes();
+        Path path = Paths.get(String.format("%s/%s_%s", destinationFolder, image.hashCode(), image.getOriginalFilename()));
+        Files.createDirectories(path.getParent());
+        Files.createFile(path);
+        Files.write(path, bytes);
+
+        return path.toString();
+    }
 }

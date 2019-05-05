@@ -110,7 +110,7 @@ public class AdvertUserServiceIntegrationTests {
         request.setCategory(0L);
         request.setAdditionalInfo(null);
         request.setTags(null);
-        request.setImage(null);
+        request.setImageFile(null);
         advertUserService.addAdvert(userId, request);
     }
 
@@ -128,7 +128,7 @@ public class AdvertUserServiceIntegrationTests {
         request.setCategory(0L);
         request.setAdditionalInfo(additionalInfos);
         request.setTags(null);
-        request.setImage(null);
+        request.setImageFile(null);
         advertUserService.addAdvert(userId, request);
     }
 

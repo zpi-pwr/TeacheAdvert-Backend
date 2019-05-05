@@ -1,10 +1,15 @@
 package ppztw.AdvertBoard.Advert;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileUrlResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ppztw.AdvertBoard.Exception.IncorrectFileException;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Advert.Advert;
 import ppztw.AdvertBoard.Model.Advert.Category;
@@ -12,8 +17,14 @@ import ppztw.AdvertBoard.Repository.Advert.AdvertRepository;
 import ppztw.AdvertBoard.Repository.Advert.CategoryRepository;
 import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AdvertService {
@@ -47,5 +58,22 @@ public class AdvertService {
         for (Category subcategory : category.getAllSubcategories())
             categoryIds.add(subcategory.getId());
         return categoryIds;
+    }
+
+    public Resource loadImage(Long advertId) throws MalformedURLException {
+        Optional<Advert> advert = advertRepository.findById(advertId);
+
+        if(advert.isPresent()) {
+            Path file = Paths.get(advert.get().getImagePath());
+            Resource resource = new UrlResource(file.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new ResourceNotFoundException("Image", "Path", file.toString());
+            }
+        }
+
+        throw new ResourceNotFoundException("Advert", "ID", advertId);
     }
 }

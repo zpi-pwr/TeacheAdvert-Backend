@@ -32,10 +32,8 @@ public class Advert {
     @Column(nullable = false)
     private String description;
 
-    @Lob
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Image image;
+    private String imagePath;
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
@@ -55,20 +53,20 @@ public class Advert {
     @OneToMany(cascade = CascadeType.ALL)
     private List<AdvertInfo> additionalInfo;
 
-    @JsonGetter
-    public String getBase64() {
-        if (image != null)
-            return "data:image/png:base64," + image.getBase64();
-        else return "";
-    }
+    // @JsonGetter
+    // public String getBase64() {
+    //     if (image != null)
+    //         return "data:image/png:base64," + image.getBase64();
+    //     else return "";
+    // }
 
 
-    public Advert(String title, List<Tag> tags, String description, Image image,
+    public Advert(String title, List<Tag> tags, String description, String imagePath,
                   Category subcategory, User user, List<AdvertInfo> additionalInfo) {
         this.title = title;
         this.tags = new ArrayList<>();
         this.description = description;
-        this.image = image;
+        this.imagePath = imagePath;
         this.tags = tags;
         this.category = subcategory;
         this.date = LocalDate.now();
