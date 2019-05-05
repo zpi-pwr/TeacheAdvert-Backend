@@ -62,15 +62,17 @@ public class AdvertService {
 
     public Resource loadImage(Long advertId) throws MalformedURLException {
         Optional<Advert> advert = advertRepository.findById(advertId);
+        Path file;
+        Resource resource;
 
         if(advert.isPresent()) {
-            Path file = Paths.get(advert.get().getImagePath());
-            Resource resource = new UrlResource(file.toUri());
+            file = Paths.get(advert.get().getImagePath());
+            resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
-                throw new ResourceNotFoundException("Image", "Path", file.toString());
+                return new UrlResource(Paths.get("./images/default.jpg").toUri());
             }
         }
 
