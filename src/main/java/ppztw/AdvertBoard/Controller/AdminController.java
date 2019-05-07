@@ -42,18 +42,20 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<?> setReportCaseStatus(@CurrentUser UserPrincipal userPrincipal,
                                           @RequestParam Long reportId,
-                                          @RequestParam CaseStatus status) {
+                                          @RequestParam String status) {
 
-        adminService.setReportCaseStatus(reportId, status);
+        CaseStatus caseStatus = CaseStatus.valueOf(status);
+        adminService.setReportCaseStatus(reportId, caseStatus);
         return ResponseEntity.ok(new ApiResponse(true, "Status changed"));
     }
 
     @PostMapping("/advert/status")
     @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<?> setAdvertStatus(@CurrentUser UserPrincipal userPrincipal, @RequestParam Long advertId,
-                                      @RequestParam Advert.Status status) {
+                                      @RequestParam String status) {
 
-        adminService.setAdvertStatus(advertId, status);
+        Advert.Status advertStatus = Advert.Status.valueOf(status);
+        adminService.setAdvertStatus(advertId, advertStatus);
         return ResponseEntity.ok(new ApiResponse(true, "Status changed"));
     }
 

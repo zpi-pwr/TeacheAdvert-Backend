@@ -22,7 +22,7 @@ public interface AdvertRepository extends JpaRepository<Advert, Long> {
                                                    @Param("substr") String titleContains,
                                                    Pageable pageable);
 
-    @Query(value = "SELECT * FROM adverts WHERE category_category_id = :id AND a.status IN (0, 1)" +
+    @Query(value = "SELECT * FROM adverts a WHERE a.category_category_id = :id AND a.status IN (0, 1)" +
             " ORDER BY random() LIMIT :adcount", nativeQuery = true)
     List<Advert> findRandomByCategoryId(@Param("id") Long categoryId, @Param("adcount") Integer advertCount);
 
