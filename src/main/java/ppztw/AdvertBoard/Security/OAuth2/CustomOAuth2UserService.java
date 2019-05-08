@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.StringUtils;
 import ppztw.AdvertBoard.Exception.OAuth2AuthenticationProcessingException;
 import ppztw.AdvertBoard.Model.AuthProvider;
+import ppztw.AdvertBoard.Model.Profile;
 import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.Repository.UserRepository;
 import ppztw.AdvertBoard.Security.OAuth2.User.OAuth2UserInfo;
@@ -62,6 +63,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
         User user = new User();
+        Profile profile = new Profile();
+        profile.setVisibleName(oAuth2UserInfo.getName());
 
         user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
         user.setProviderId(oAuth2UserInfo.getId());
@@ -73,6 +76,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
         existingUser.setName(oAuth2UserInfo.getName());
+        existingUser.getProfile().setVisibleName(oAuth2UserInfo.getName());
         existingUser.setImageUrl(oAuth2UserInfo.getImageUrl());
         return userRepository.save(existingUser);
     }
