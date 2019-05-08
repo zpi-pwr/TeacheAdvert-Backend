@@ -16,9 +16,6 @@ public class Profile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToOne
-    User user;
-
     String visibleName;
 
     String firstName;

@@ -3,16 +3,13 @@ package ppztw.AdvertBoard.Advert;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ppztw.AdvertBoard.Exception.BadRequestException;
 import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.Advert;
-import ppztw.AdvertBoard.Model.Profile;
 import ppztw.AdvertBoard.Model.Tag;
 import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.Payload.Advert.CreateAdvertRequest;
 import ppztw.AdvertBoard.Payload.Advert.EditAdvertRequest;
 import ppztw.AdvertBoard.Repository.AdvertRepository;
-import ppztw.AdvertBoard.Repository.ProfileRepository;
 import ppztw.AdvertBoard.Repository.TagRepository;
 import ppztw.AdvertBoard.Repository.UserRepository;
 
@@ -32,9 +29,6 @@ public class AdvertUserService {
     @Autowired
     private AdvertRepository advertRepository;
 
-    @Autowired
-    private ProfileRepository profileRepository;
-
     public Optional<Advert> findAdvert(Long userId, Long id) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException("User", "id", userId));
@@ -52,8 +46,6 @@ public class AdvertUserService {
     public void addAdvert(Long userId, CreateAdvertRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException("User", "id", userId));
-        Profile profile = profileRepository.findByUserId(userId).orElseThrow(() ->
-                new BadRequestException("Musisz posiadać publiczny profil, aby dodawać ogłoszenia"));
         List<Advert> advertList = user.getAdverts() == null ? new ArrayList<Advert>() : user.getAdverts();
         Advert advert = addNewAdvert(request.getTitle(), request.getTags(), request.getDescription(), user);
         advertList.add(advert);
