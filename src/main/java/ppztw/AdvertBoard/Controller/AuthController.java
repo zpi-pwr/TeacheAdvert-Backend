@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ppztw.AdvertBoard.Exception.BadRequestException;
 import ppztw.AdvertBoard.Model.AuthProvider;
+import ppztw.AdvertBoard.Model.Profile;
 import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Payload.AuthResponse;
@@ -74,6 +75,9 @@ public class AuthController {
         user.setEmail(signUpRequest.getEmail());
         user.setPassword(signUpRequest.getPassword());
         user.setProvider(AuthProvider.local);
+        Profile profile = new Profile();
+        profile.setVisibleName(signUpRequest.getName());
+        user.setProfile(profile);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
