@@ -4,8 +4,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import ppztw.AdvertBoard.Model.User.Role;
-import ppztw.AdvertBoard.Model.User.User;
+import ppztw.AdvertBoard.Model.Role;
+import ppztw.AdvertBoard.Model.User;
 
 import java.util.ArrayList;
 import java.util.Collection;

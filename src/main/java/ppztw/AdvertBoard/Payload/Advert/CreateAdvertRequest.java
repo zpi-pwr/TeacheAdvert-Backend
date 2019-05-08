@@ -26,16 +26,4 @@ public class CreateAdvertRequest {
 
     @NotBlank
     private String description;
-
-    @NotNull
-    private Long category;
-
-//    @Nullable
-//    private ImagePayload image;
-
-    @Nullable
-    private MultipartFile imageFile;
-
-    @Nullable
-    private Map<Long, String> additionalInfo;
 }

@@ -26,6 +26,4 @@ public class ProfileInfo {
     @Nullable
     String contactMail;
 
-    @Nullable
-    Map<Long, Double> categoryEntries;
 }

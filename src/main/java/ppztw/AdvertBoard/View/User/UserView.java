@@ -2,11 +2,11 @@ package ppztw.AdvertBoard.View.User;
 
 import lombok.Getter;
 import lombok.Setter;
-import ppztw.AdvertBoard.Model.Advert.Advert;
-import ppztw.AdvertBoard.Model.User.AuthProvider;
-import ppztw.AdvertBoard.Model.User.Profile;
-import ppztw.AdvertBoard.Model.User.Role;
-import ppztw.AdvertBoard.Model.User.User;
+import ppztw.AdvertBoard.Model.Advert;
+import ppztw.AdvertBoard.Model.AuthProvider;
+import ppztw.AdvertBoard.Model.Profile;
+import ppztw.AdvertBoard.Model.Role;
+import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 
 import java.util.ArrayList;

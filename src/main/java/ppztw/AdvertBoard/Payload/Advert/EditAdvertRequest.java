@@ -26,10 +26,4 @@ public class EditAdvertRequest {
     @Nullable
     private String description;
 
-    @Nullable
-    private MultipartFile imageFile;
-
-    @Nullable
-    private Map<Long, String> additionalInfo;
-
 }

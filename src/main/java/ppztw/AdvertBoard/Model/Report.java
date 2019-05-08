@@ -1,9 +1,8 @@
-package ppztw.AdvertBoard.Model.User;
+package ppztw.AdvertBoard.Model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ppztw.AdvertBoard.Model.Advert.Advert;
 
 import javax.persistence.*;
 

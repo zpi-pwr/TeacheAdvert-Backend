@@ -3,8 +3,8 @@ package ppztw.AdvertBoard.View.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ppztw.AdvertBoard.Model.Advert.Advert;
-import ppztw.AdvertBoard.Model.User.Profile;
+import ppztw.AdvertBoard.Model.Advert;
+import ppztw.AdvertBoard.Model.Profile;
 import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
 
 import java.util.ArrayList;

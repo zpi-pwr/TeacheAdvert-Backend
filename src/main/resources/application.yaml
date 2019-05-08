@@ -3,12 +3,9 @@ server:
     contextPath: /api
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: advertboard
-    # url: jdbc:postgresql://packy.db.elephantsql.com:5432/rmyrrehv
-    # username: rmyrrehv
-    # password: NVnTV7vfed0K-W7uGFD7ZmRIX1Z7MjRn
+    url: jdbc:postgresql://dumbo.db.elephantsql.com:5432/vgvubgys
+    username: vgvubgys
+    password: jx-4YG6JVoSPNYSBtgfaUqwtZlQYmwIN
 
   jpa:
     database: postgresql
@@ -56,7 +53,3 @@ app:
     tokenExpirationMsec: 864000000
   oauth2:
     authorizedRedirectUris:
-      - http://localhost:3000/oauth2/redirect
-      - http://advertboard.pl:3000/oauth2/redirect
-      - http://pwr-advert-board-frontend.herokuapp.com/oauth2/redirect
-

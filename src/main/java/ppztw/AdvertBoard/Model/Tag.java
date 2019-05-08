@@ -1,4 +1,4 @@
-package ppztw.AdvertBoard.Model.Advert;
+package ppztw.AdvertBoard.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
