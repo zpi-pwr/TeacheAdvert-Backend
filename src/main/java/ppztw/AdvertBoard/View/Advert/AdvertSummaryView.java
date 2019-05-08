@@ -11,7 +11,6 @@ import java.time.LocalDate;
 public class AdvertSummaryView {
     Long id;
     String title;
-    String pic;
     LocalDate date;
 
     public AdvertSummaryView(Advert advert) {
