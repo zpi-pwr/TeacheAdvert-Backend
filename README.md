@@ -9,122 +9,248 @@ Backend of the application
 
 # Queries
 
-## User
+## Auth
 
 ### Sign Up
+path: 
 ```
-path: /auth/signup
-header: Content-Type: application/json
-method: POST
-request body: {"name":<USERNAME>, "email":<EMAIL>,"password":<PASSWORD>}
+/auth/signup
 ```
 
+method: post
+request body:
+```
+{"name":<USERNAME>, "email":<EMAIL>,"password":<PASSWORD>}
+```
 ### Log in
+path: 
 ```
-path: /auth/login
-header: Content-Type: application/json
-method: POST
-request body: {"email":<EMAIL>,"password":<PASSWORD>}
+/auth/login
 ```
 
-### Current user
+method: post
+request body:
 ```
-path: /user/me
-header: Authorization: Bearer <TOKEN>
-method: GET
+{"email":<EMAIL>,"password":<PASSWORD>}
 ```
-
-### Edit Profile
+reponse body:
 ```
-path: /user/me
-header: Authorization: Bearer <TOKEN>
-header: Content-Type: application/json
-method: POST
-request body: {"visibleName":<NAME>, "firstName":<NAME>, "lastName":<NAME>, "telephoneNumber":<NUMBER>, "contactMail":<MAIL>}
+{"accessToken":<TOKEN>, "tokenType":<TYPE>
 ```
 
-### All users
+## User
+
+### Me (GET)
+path: 
 ```
-path: /user/all
-method: GET
-request param: nameContains, page, limit, sort
+/user/me
 ```
 
-### Get user
+method: get
+reponse body:
 ```
-path: /user/get
-method: GET
-request param: profileId
+{
+    "name": <NAME>,
+    "email": <MAIL>,
+    "emailVerified": true/false,
+    "adverts": <ADVERTS>,
+    "provider": <PROVIDER>,
+    "profileView": {
+        "id": <PROFILE_ID>,
+        "visibleName": <VISIBLE_NAME>,
+        "firstName": <FIRST_NAME>,
+        "lastName": <LAST_NAME>,
+        "telephoneNumber": <TEL_NUMBER>,
+        "contactMail": <CONTACT_MAIL>
+    },
+    "role": <ROLE>
+}
 ```
 
+
+### Me (POST)
+path: 
+```
+/user/me
+```
+
+method: post
+request body:
+```
+{
+  "visibleName": <VISIBLE_NAME>,
+  "firstName": <FIRST_NAME>,
+  "lastName": <LAST_NAME>,
+  "telephoneNumber": <TEL_NUMBER>,
+  "contactMail": <CONTACT_MAIL>
+}
+```
+
+### All
+path:
+```
+/user/all
+```
+method: get
+request parameters: page, limit, sort, nameContains (you can put anything that exists to the sort, f.e. profileVisibleName)
+response body example:
+```
+{
+    "content": [
+        {
+            "id": 1,
+            "visibleName": "testUser"
+        },
+        {
+            "id": 2,
+            "visibleName": "testUser"
+        }
+    ],
+    "pageable": {
+        "sort": {
+            "sorted": true,
+            "unsorted": false,
+            "empty": false
+        },
+        "pageSize": 20,
+        "pageNumber": 0,
+        "offset": 0,
+        "paged": true,
+        "unpaged": false
+    },
+    "totalElements": 2,
+    "totalPages": 1,
+    "last": true,
+    "first": true,
+    "sort": {
+        "sorted": true,
+        "unsorted": false,
+        "empty": false
+    },
+    "number": 0,
+    "numberOfElements": 2,
+    "size": 20,
+    "empty": false
+}
+```
+
+### Get
+path:
+```
+user/get
+```
+method: get
+request parameters: profileId
+response body:
+```
+{
+    "id": <ID>,
+    "visibleName": <VISIBLE_NAME>,
+    "firstName": <FIRST_NAME>,
+    "lastName": <LAST_NAME>,
+    "telephoneNumber": <TEL_NUM>,
+    "contactMail": <MAIL>,
+    "advertSummaryViews": <ADVERTS>
+}
+```
 ## Advert
 
-### Add advert
+### Add
+path:
 ```
-path: /advert/add
-header: Authorization: Bearer <TOKEN>; Content-Type: application/json
-method: POST
-request body: {"title":<TITLE>, "tags":<TAGS>, "description":<DESC>, "image": {"base64":<B64>, "name":<NAME>}, category:<CAT_ID>, "additionalInfo":{<INFO_ID>:<VALUE>, ...}}
+/advert/add
 ```
-
-### Edit advert
+method: post
+request body example:
 ```
-path: /advert/edit
-header: Authorization: Bearer <TOKEN>; Content-Type: application/json
-method: POST
-request body: {"id":<ID>, "title":<TITLE>, "tags":<TAGS>, "description":<DESC>, "image": {"base64":<B64>, "name":<NAME>}, "additionalInfo":{<INFO_ID>:<VALUE>, ...}}
+{"title": "Title1", "tags": ["tag1", "tag2"], "description": "Lorem ipsum .... "}
 ```
 
-### Remove advert
+### Edit
+path:
 ```
-path: /advert/remove
-header: Authorization: Bearer <TOKEN>
-method: POST
+/advert/edit
+```
+method: post
+request body example:
+```
+{"id": "1", "title": "Title1", "tags": ["tag1", "tag2"], "description": "Lorem ipsum .... "}
+```
+
+### Remove
+path:
+```
+/advert/remove
+```
+method: post
 request param: id
+
+### Get
+path:
+```
+/advert/get
+```
+method: get
+response body example:
+```
+{
+    "id": "1",
+    "title": "abc",
+    "date": "2019-05-09",
+    "profileId": 1,
+    "profileName": "testUser",
+    "description": "ab",
+    "tags": [
+        "tag1",
+        "tag2"
+    ],
+    "status": "EDITED"
+}
 ```
 
-### All adverts
+### Browse
+path:
 ```
-path: /advert/all
-method: GET
-request param: page, limit, sort
+/advert/browse
 ```
-
-### Get advert
+method: get
+request parameters: page, limit, sort, titleContains, tags (list of strings)  
+response body example:
 ```
-path: /advert/get
-method: GET
-request param: id
-```
-
-## Category
-
-### Add category
-```
-path: /category/add
-header: Authorization: Bearer <TOKEN>; Content-Type: application/json
-method: POST
-request body: {"categoryName":<NAME>, "description":<DESC>, "parentCategory":<PARENT_ID>, "infos": {<NAME>:<INFO_TYPE>, ...}}
-```
-
-### Remove category
-```
-path: /category/remove
-header: Authorization: Bearer <TOKEN>
-method: POST
-request param: categoryName
-```
-
-### All categories
-```
-path: /category/all
-method: GET
-```
-
-### Get category adverts
-```
-path: /category/get
-method: GET
-request param: categoryName, page, limit, sort, titleContains
+{
+    "content": [
+        {
+            "id": 1,
+            "title": "abc",
+            "pic": null,
+            "date": "2019-05-09"
+        }
+    ],
+    "pageable": {
+        "sort": {
+            "sorted": false,
+            "unsorted": true,
+            "empty": true
+        },
+        "pageSize": 20,
+        "pageNumber": 0,
+        "offset": 0,
+        "paged": true,
+        "unpaged": false
+    },
+    "totalElements": 1,
+    "totalPages": 1,
+    "last": true,
+    "first": true,
+    "sort": {
+        "sorted": false,
+        "unsorted": true,
+        "empty": true
+    },
+    "number": 0,
+    "numberOfElements": 1,
+    "size": 20,
+    "empty": false
+}
 ```
 
