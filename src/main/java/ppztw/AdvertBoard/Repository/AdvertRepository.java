@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface AdvertRepository extends JpaRepository<Advert, Long> {
 
-    @Query("SELECT a FROM #{#entityName} a JOIN a.tags t" +
+    @Query("SELECT DISTINCT a FROM #{#entityName} a JOIN a.tags t" +
             " WHERE t.name IN :tags AND" +
             " a.status IN (0, 1)" +
             " AND a.title LIKE CONCAT('%',:title,'%')")
