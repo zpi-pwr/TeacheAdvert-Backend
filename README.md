@@ -62,6 +62,8 @@ reponse body:
         "lastName": <LAST_NAME>,
         "telephoneNumber": <TEL_NUMBER>,
         "contactMail": <CONTACT_MAIL>
+        "rating": <RATING>,
+        "ratingCount": <RATING_COUNT>
     },
     "role": <ROLE>
 }
@@ -151,8 +153,20 @@ response body:
     "telephoneNumber": <TEL_NUM>,
     "contactMail": <MAIL>,
     "advertSummaryViews": <ADVERTS>
+    "rating": <RATING>,
+    "ratingCount": <RATING_COUNT>
+    
 }
 ```
+
+### Rate profile
+path:
+```
+user/rate
+```
+method: post
+request parameters: profileId, rating ( 1 <= rating <= 5)
+
 ## Advert
 
 ### Add
