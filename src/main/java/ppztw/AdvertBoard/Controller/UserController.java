@@ -1,13 +1,12 @@
 package ppztw.AdvertBoard.Controller;
 
+import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ppztw.AdvertBoard.Exception.ResourceNotFoundException;
 import ppztw.AdvertBoard.Model.User;
 import ppztw.AdvertBoard.Payload.ApiResponse;
 import ppztw.AdvertBoard.Payload.ProfileInfo;
@@ -20,8 +19,6 @@ import ppztw.AdvertBoard.View.User.ProfileView;
 import ppztw.AdvertBoard.View.User.UserView;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 public class UserController {
@@ -35,9 +32,10 @@ public class UserController {
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
     public UserView getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-        User user = userRepository.findById(userPrincipal.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
-        return new UserView(user);
+        User user = userService.findById(userPrincipal.getId());
+        Double rating = userService.getProfileRating(user.getProfile().getId());
+        Integer ratingCount = userService.getProfileRatingCount(user.getProfile().getId());
+        return new UserView(user, rating, ratingCount);
 
     }
 
@@ -53,26 +51,21 @@ public class UserController {
     @PreAuthorize("permitAll()")
     public Page<ProfileSummaryView> getAllUsers(Pageable pageable,
                                                 @RequestParam(required = false) String nameContains) {
-
-        Page<User> users;
-        if (nameContains != null && !nameContains.isEmpty())
-            users = userRepository.findAllByProfileVisibleNameLike(nameContains, pageable);
-        else
-            users = userRepository.findAll(pageable);
-
-        List<ProfileSummaryView> profileSummaryViewList = new ArrayList<>();
-        for (User user : users)
-            profileSummaryViewList.add(new ProfileSummaryView(user));
-        return new PageImpl<>(profileSummaryViewList, pageable, users.getTotalElements());
+        return userService.getAllProfileSummaryViews(pageable, nameContains);
     }
-
 
     @GetMapping("/user/get")
     @PreAuthorize("permitAll()")
-    public ProfileView getProfile(@Valid Long profileId) {
-        User user = userRepository.findByProfileId(profileId)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile", "id", profileId));
+    public ProfileView getProfile(@RequestParam Long profileId) {
+        return userService.getProfileView(profileId);
+    }
 
-        return new ProfileView(user);
+    @PostMapping("/user/rate")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> rateProfile(@CurrentUser UserPrincipal userPrincipal,
+                                         @RequestParam @Valid Long profileId,
+                                         @RequestParam @Range(min = 1, max = 5) Integer rating) {
+        userService.rateProfile(userPrincipal.getId(), profileId, rating);
+        return ResponseEntity.ok(new ApiResponse(true, "User rated"));
     }
 }
