@@ -47,7 +47,8 @@ public class AdvertUserService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException("User", "id", userId));
         List<Advert> advertList = user.getAdverts() == null ? new ArrayList<Advert>() : user.getAdverts();
-        Advert advert = addNewAdvert(request.getTitle(), request.getTags(), request.getDescription(), user);
+        Advert advert = addNewAdvert(request.getTitle(), request.getTags(), request.getDescription(), user,
+                request.getConversationId());
         advertList.add(advert);
         user.setAdverts(advertList);
         userRepository.save(user);
@@ -68,9 +69,9 @@ public class AdvertUserService {
     }
 
 
-    private Advert addNewAdvert(String title, List<String> tagNames, String description, User user) {
+    private Advert addNewAdvert(String title, List<String> tagNames, String description, User user, Long conversationId) {
         List<Tag> tags = processTags(tagNames);
-        return advertRepository.save(new Advert(title, tags, description, user));
+        return advertRepository.save(new Advert(title, tags, description, user, conversationId));
     }
 
 

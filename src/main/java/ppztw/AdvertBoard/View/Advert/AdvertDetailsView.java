@@ -5,12 +5,8 @@ import lombok.Setter;
 import ppztw.AdvertBoard.Model.Advert;
 import ppztw.AdvertBoard.Model.Tag;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
@@ -21,6 +17,7 @@ public class AdvertDetailsView extends AdvertSummaryView {
     String description;
     List<String> tags;
     Advert.Status status;
+    Long conversationId;
 
 
     public AdvertDetailsView(Advert advert) {
@@ -32,6 +29,7 @@ public class AdvertDetailsView extends AdvertSummaryView {
         this.description = advert.getDescription();
         this.status = advert.getStatus();
         this.tags = new ArrayList<>();
+        this.conversationId = advert.getConversationId();
         for (Tag tag : advert.getTags())
             this.tags.add(tag.getName());
 

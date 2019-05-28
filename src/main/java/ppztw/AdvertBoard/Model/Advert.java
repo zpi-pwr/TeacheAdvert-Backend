@@ -39,13 +39,16 @@ public class Advert {
     @JsonBackReference
     private User user;
 
-    public Advert(String title, List<Tag> tags, String description, User user) {
+    private Long conversationId;
+
+    public Advert(String title, List<Tag> tags, String description, User user, Long conversationId) {
         this.title = title;
         this.tags = new ArrayList<>();
         this.description = description;
         this.tags = tags;
         this.date = LocalDate.now();
         this.user = user;
+        this.conversationId = conversationId;
 
         status = Status.OK;
     }
