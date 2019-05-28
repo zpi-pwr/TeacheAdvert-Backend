@@ -177,7 +177,7 @@ path:
 method: post
 request body example:
 ```
-{"title": "Title1", "tags": ["tag1", "tag2"], "description": "Lorem ipsum .... "}
+{"title": "Title1", "tags": ["tag1", "tag2"], "description": "Lorem ipsum .... ", "conversationId': "2137"},
 ```
 
 ### Edit
@@ -218,7 +218,8 @@ response body example:
         "tag1",
         "tag2"
     ],
-    "status": "EDITED"
+    "status": "EDITED",
+    "conversationId': "2137"
 }
 ```
 
