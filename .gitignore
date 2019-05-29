@@ -32,6 +32,8 @@ HELP.md
 .attach_pid*
 
 ## Images ##
-/images/user/
+/images/
+!/images/default.jpg
 
 application.yaml
+
