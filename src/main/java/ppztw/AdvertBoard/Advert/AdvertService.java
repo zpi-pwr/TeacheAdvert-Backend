@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ppztw.AdvertBoard.Model.Advert;
 import ppztw.AdvertBoard.Repository.AdvertRepository;
 import ppztw.AdvertBoard.View.Advert.AdvertSummaryView;
+import ppztw.AdvertBoard.View.Advert.AdvertDetailsView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +20,8 @@ public class AdvertService {
     AdvertRepository advertRepository;
 
 
-    public Page<AdvertSummaryView> getPage(Pageable pageable, String titleContains, List<String> tags) {
-        Page<AdvertSummaryView> adverts;
+    public Page<AdvertDetailsView> getPage(Pageable pageable, String titleContains, List<String> tags) {
+        Page<AdvertDetailsView> adverts;
         if (titleContains == null)
             titleContains = "";
         if (tags == null || tags.isEmpty())
@@ -31,10 +32,10 @@ public class AdvertService {
         return adverts;
     }
 
-    private Page<AdvertSummaryView> advertToSummaryView(Page<Advert> adverts) {
-        List<AdvertSummaryView> advertSummaryViews = new ArrayList<>();
+    private Page<AdvertDetailsView> advertToSummaryView(Page<Advert> adverts) {
+        List<AdvertDetailsView> advertSummaryViews = new ArrayList<>();
         for (Advert advert : adverts)
-            advertSummaryViews.add(new AdvertSummaryView(advert));
+            advertSummaryViews.add(new AdvertDetailsView(advert));
         return new PageImpl<>(advertSummaryViews, adverts.getPageable(), adverts.getTotalElements());
     }
 

@@ -85,7 +85,7 @@ public class AdvertController {
 
     @GetMapping("/browse")
     @PreAuthorize("permitAll()")
-    public Page<AdvertSummaryView> getAdverts(
+    public Page<AdvertDetailsView> getAdverts(
             @CurrentUser UserPrincipal userPrincipal, Pageable pageable,
             @RequestParam(required = false) String titleContains, @RequestParam(required = false)
                     List<String> tags) {
