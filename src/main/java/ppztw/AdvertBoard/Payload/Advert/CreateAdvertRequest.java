@@ -28,5 +28,5 @@ public class CreateAdvertRequest {
     private String description;
 
     @NotNull
-    private Long conversationId;
+    private String conversationId;
 }
