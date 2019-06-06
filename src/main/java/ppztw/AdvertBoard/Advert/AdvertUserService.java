@@ -69,7 +69,7 @@ public class AdvertUserService {
     }
 
 
-    private Advert addNewAdvert(String title, List<String> tagNames, String description, User user, Long conversationId) {
+    private Advert addNewAdvert(String title, List<String> tagNames, String description, User user, String conversationId) {
         List<Tag> tags = processTags(tagNames);
         return advertRepository.save(new Advert(title, tags, description, user, conversationId));
     }

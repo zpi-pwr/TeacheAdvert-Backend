@@ -17,7 +17,7 @@ public class AdvertDetailsView extends AdvertSummaryView {
     String description;
     List<String> tags;
     Advert.Status status;
-    Long conversationId;
+    String conversationId;
 
 
     public AdvertDetailsView(Advert advert) {
